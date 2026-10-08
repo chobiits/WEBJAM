@@ -42,10 +42,92 @@ body {
         290px 290px,
         370px 370px;
 
-
+    /* Animation de déplacement du fond.
+    derive = nom de l'animation
+    40s = durée d'un cycle complet
+    linear = vitesse constante
+    infinite = recommence à l'infini */
+    animation: derive 40s linear infinite;
 }
 
-/* Navigation   */
+/* Étoiles qui scintillent : deux couches à des rythmes différents */
+
+/* ::before et ::after créent deux éléments supplémentaires
+sans avoir besoin d'ajouter du HTML.
+
+Ils sont placés par desus le fond étoilé principal*/
+
+.etoiles::before,
+.etoiles::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+}
+
+.etoiles::before {
+    /* étoiles un peu plus grosses que celles de la couche principale */
+    background-image:
+        radial-gradient(circle at 15% 50%, white 2px, transparent 3px),
+        radial-gradient(circle at 40% 10%, white 1.5px, transparent 2.5px),
+        radial-gradient(circle at 70% 85%, white 2px, transparent 3px),
+        radial-gradient(circle at 95% 60%, white 1.5px, transparent 2.5px);
+
+    /* là aussi chaque étoile a une fréquence de répétition différente */
+    background-size:
+        330px 330px,
+        280px 280px,
+        410px 410px,
+        360px 360px;
+
+    /* varier l'opacité */
+    animation: scintille 3s ease-in-out infinite alternate;
+}
+
+/* Deuxième couche d'étoiles */
+.etoiles::after {
+    background-image:
+        radial-gradient(circle at 25% 25%, white 2px, transparent 3px),
+        radial-gradient(circle at 55% 45%, white 1.5px, transparent 2.5px),
+        radial-gradient(circle at 80% 15%, white 2px, transparent 3px),
+        radial-gradient(circle at 5% 90%, white 1.5px, transparent 2.5px);
+
+    background-size:
+        300px 300px,
+        350px 350px,
+        420px 420px,
+        260px 260px;
+    /* cette couche scintille plus lentement */
+    animation: scintille 5s ease-in-out infinite alternate;
+    animation-delay: -2s;
+}
+
+@keyframes scintille {
+    from { opacity: 0.1; }
+    to   { opacity: 1; }
+}
+
+@keyframes derive {
+    /* position initiale de toutes les couches de background-image */
+    from {
+        background-position: 0 0, 0 0, 0 0, 0 0, 0 0, 0 0, 0 0, 0 0;
+    }
+
+    /* Chaque background est déplacé de la taille de sa propre tuile.*/
+
+    to {
+        background-position:
+            310px 310px,
+            270px 270px,
+            390px 390px,
+            250px 250px,
+            340px 340px,
+            430px 430px,
+            290px 290px,
+            370px 370px;
+    }
+}
+
+/* Navigation */
 
 .site-header {
     position: fixed;
@@ -79,7 +161,6 @@ body {
     transform: translateY(-2px);
 }
 
-
 /* Menu principal */
 
 .hero {
@@ -111,7 +192,7 @@ body {
     letter-spacing: 2px;
 }
 
-/* bouton commencer */
+/* Bouton commencer */
 
 .start-button {
     margin-top: 20px;
@@ -129,17 +210,13 @@ body {
         background 0.5s ease,
         color 0.5s ease,
         transform 0.5s ease;
-
-    
 }
 
 .start-button:hover {
     background: #fff;
     color: #000;
-    border : 5px solid #fff;
-    
+    border: 5px solid #fff;
 }
-
 
 /* Synopsis et équipe */
 /* Le contenu reste au-dessus de la texture */
@@ -174,7 +251,6 @@ body {
     line-height: 2;
 }
 
-
 .info-section ul {
     margin: 0;
     padding: 0;
@@ -203,8 +279,7 @@ body {
     transform: translateY(0);
 }
 
-
-/* délai entre les éléments */
+/* Délai entre les éléments */
 
 .reveal-delay {
     transition-delay: 0.2s;
@@ -236,7 +311,6 @@ body {
     overflow: hidden;
 }
 
-
 /* Texture papier */
 
 .contenu-clair::before {
@@ -254,3 +328,34 @@ body {
     pointer-events: none;
 }
 
+/* Animation du titre */
+
+.titre-anim {
+    display: inline-block;
+    animation: titreAnim 2s ease-in-out infinite;
+}
+
+@keyframes titreAnim {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* si l'utilisateur a activé l'option qui demande de réduire les animations, on arrête les animations des étoiles. */
+
+@media (prefers-reduced-motion: reduce) {
+    .etoiles,
+    .etoiles::before,
+    .etoiles::after,
+    .titre-anim {
+        animation: none;
+    }
+}
