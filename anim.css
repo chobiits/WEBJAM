@@ -1,0 +1,132 @@
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    background: #000;
+    color: #fff;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Navigation   */
+
+.site-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 30px 45px;
+    z-index: 10;
+}
+
+.main-nav {
+    display: flex;
+    justify-content: flex-end;
+    gap: 35px;
+}
+
+.main-nav a {
+    color: #fff;
+    text-decoration: none;
+    text-transform: uppercase;
+    font-size: 14px;
+    letter-spacing: 2px;
+    opacity: 0.7;
+    transition:
+        opacity 0.3s ease,
+        transform 0.3s ease;
+}
+
+.main-nav a:hover {
+    opacity: 1;
+    transform: translateY(-2px);
+}
+
+
+
+
+/* ici on met un bloc pour regrouper les différentes scènes */
+.scene  {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    --t: 0;
+
+    /* positions manuelles de la scene */
+
+    --fx: 80;    /* horizontal*/
+    --fy: 85; /* vertical*/
+}
+
+/* les différentes couches/images/layer du parallaxe. le scale permet de modifier la perspective*/
+.layer {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100vmin;
+    height: 100vmin;
+
+}
+
+
+.ville{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100vmin;
+    height: 100vmin;
+    /* on mets les variables de la position de la scene */
+    transform-origin: var(--fx) var(--fy); /* zoomer autour de la fleur */
+    transform: translate(-50%, -50%) scale(calc(10 - var(--t) * 9));
+}
+
+
+.ville img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+
+}
+
+.fleur{
+    position: absolute;
+    left: calc(var(--x) * 1%);
+    top: calc(var(--y) * 1%);
+    width: 10%;
+    aspect-ratio: 1;
+    transform: translate(-50%, -50%);
+
+}
+
+.fleur img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+
+/* classe de l'image dans la scène */
+.layer img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+
+}
+
+
+/*  on calcule le scale et on fait son animation par rapport a t (les différentes scènes) */
+#ville {
+    transform : translate(-50%, -50%) scale(calc(10 - var(--t) * 9));
+}
+
+#fleur {
+    transform : translate(-50%, -50%) scale(calc(1 - var(--t) * 0.9));
+}

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Webjam - Animation</title>
+    <link rel="stylesheet" href="anim.css">
+</head>
+<body>
+    <header class="site-header">
+        <nav class="main-nav" aria-label="Navigation principale">
+            <a href="#synopsis">Synopsis</a>
+            <a href="#equipe">Équipe</a>
+        </nav>
+    </header>
+
+    <div class="scene">
+    <div class="layer" id="ville"> <img src="./assets/ville.jpg" alt=""> </div>
+    <div class="layer" id="fleur"> <img src="./assets/fleur.png" alt=""> </div>
+</div>
+
+<script>
+    // fonction scene principale
+    const scene = document.querySelector('.scene');
+
+    window.addEventListener('scroll', () => {
+        const max = document.body.scrollHeight - innerHeight;
+        scene.style.setProperty('--t', scrollY / max);
+    });
+</script>
+</body>
+</html>
