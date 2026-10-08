@@ -1,0 +1,256 @@
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    background: #000;
+    color: #fff;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Étoiles */
+
+.etoiles {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+
+    background-color: #000;
+
+    background-image:
+        radial-gradient(circle at 10% 20%, white 1px, transparent 1.5px),
+        radial-gradient(circle at 20% 80%, white 1px, transparent 1.5px),
+        radial-gradient(circle at 35% 35%, white 1.5px, transparent 2px),
+        radial-gradient(circle at 50% 70%, white 1px, transparent 1.5px),
+        radial-gradient(circle at 65% 15%, white 1px, transparent 1.5px),
+        radial-gradient(circle at 75% 55%, white 1.5px, transparent 2px),
+        radial-gradient(circle at 90% 30%, white 1px, transparent 1.5px),
+        radial-gradient(circle at 85% 85%, white 1px, transparent 1.5px);
+
+    background-size:
+        310px 310px,
+        270px 270px,
+        390px 390px,
+        250px 250px,
+        340px 340px,
+        430px 430px,
+        290px 290px,
+        370px 370px;
+
+
+}
+
+/* Navigation   */
+
+.site-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 30px 45px;
+    z-index: 10;
+}
+
+.main-nav {
+    display: flex;
+    justify-content: flex-end;
+    gap: 35px;
+}
+
+.main-nav a {
+    color: #fff;
+    text-decoration: none;
+    text-transform: uppercase;
+    font-size: 14px;
+    letter-spacing: 2px;
+    opacity: 0.7;
+    transition:
+        opacity 0.3s ease,
+        transform 0.3s ease;
+}
+
+.main-nav a:hover {
+    opacity: 1;
+    transform: translateY(-2px);
+}
+
+
+/* Menu principal */
+
+.hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.hero-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 22px;
+}
+
+.hero h1 {
+    margin: 0;
+    font-size: 90px;
+    font-weight: 700;
+    letter-spacing: 18px;
+}
+
+.subtitle {
+    margin: 0;
+    color: #d1d1d1;
+    font-size: 24px;
+    letter-spacing: 2px;
+}
+
+/* bouton commencer */
+
+.start-button {
+    margin-top: 20px;
+    padding: 15px 25px;
+    border: 5px solid #FFB443;
+    color: #fff;
+    background: transparent;
+    text-decoration: none;
+    text-transform: uppercase;
+    font-size: 14px;
+    letter-spacing: 3px;
+    border-radius: 15px;
+
+    transition:
+        background 0.5s ease,
+        color 0.5s ease,
+        transform 0.5s ease;
+
+    
+}
+
+.start-button:hover {
+    background: #fff;
+    color: #000;
+    border : 5px solid #fff;
+    
+}
+
+
+/* Synopsis et équipe */
+/* Le contenu reste au-dessus de la texture */
+
+.info-section {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-top: 100px;
+    padding-bottom: 100px;
+    padding-left: 15%;
+    padding-right: 15%;
+}
+
+.info-section h2 {
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 30px;
+    margin-left: 0;
+    color: #111;
+    font-size: 48px;
+    text-transform: uppercase;
+}
+
+.info-section p {
+    max-width: 750px;
+    margin: 0;
+    color: rgba(0, 0, 0, 0.75);
+    font-size: 20px;
+    line-height: 2;
+}
+
+
+.info-section ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.info-section li {
+    margin-bottom: 15px;
+    color: rgba(0, 0, 0, 0.85);
+    font-size: 22px;
+}
+
+/* Apparition au scroll */
+
+.reveal {
+    opacity: 0;
+    transform: translateY(40px);
+
+    transition:
+        opacity 0.8s ease,
+        transform 0.8s ease;
+}
+
+.reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+
+/* délai entre les éléments */
+
+.reveal-delay {
+    transition-delay: 0.2s;
+}
+
+.reveal-delay-2 {
+    transition-delay: 0.4s;
+}
+
+/* Cercle autour du curseur */
+
+.cursor-circle {
+    position: fixed;
+    width: 40px;
+    height: 40px;
+    border: 2px solid #ffb443;
+    border-radius: 50%;
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    z-index: 9999;
+}
+
+/* Partie claire après le menu */
+
+.contenu-clair {
+    position: relative;
+    background-color: #eeeeea;
+    color: #111;
+    overflow: hidden;
+}
+
+
+/* Texture papier */
+
+.contenu-clair::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url("images/papier.png");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    opacity: 0.4;
+    pointer-events: none;
+}
+

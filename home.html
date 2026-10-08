@@ -3,16 +3,113 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Webjam</title>
+
+    <title>Recentrer</title>
+
+    <link rel="stylesheet" href="main.css">
 </head>
 
-
-<header>
-<h1>salut c'est mada</h1>
-<p>ok i pull up</p>
-
-</header>
 <body>
-    
+
+    <div class="etoiles"></div>
+
+    <header class="site-header">
+        <nav class="main-nav" aria-label="Navigation principale">
+            <a href="#synopsis">Synopsis</a>
+            <a href="#equipe">Équipe</a>
+        </nav>
+    </header>
+
+    <main>
+
+        <section class="hero" id="accueil">
+
+            <div class="hero-content">
+                <h1 class="reveal">RECENTRER</h1>
+                <p class="subtitle reveal reveal-delay">Retrouver l'équilibre.</p>
+                <a href="#" class="start-button ">
+                    Commencer
+                </a>
+            </div>
+        </section>
+
+        <div class="contenu-clair">
+
+            <section id="synopsis" class="info-section">
+                <h2 class="reveal">Synopsis</h2>
+
+                <p class="reveal reveal-delay">
+                    Dans un monde avec un équilibre fragile, faites le tri entre ce qui mérite votre
+                    attention et ce qui vous éloigne de l'équilibre.
+                </p>
+            </section>
+
+
+            <section id="equipe" class="info-section">
+                <h2 class="reveal">Équipe</h2>
+
+                <ul>
+                    <li class="reveal reveal-delay">Alexandre Brucker</li>
+                    <li class="reveal reveal-delay-2">Ahinée Lola Fort</li>
+                    <li class="reveal reveal-delay">Félix Côté</li>
+                    <li class="reveal reveal-delay-2">Madalina Lisnic</li>
+                </ul>
+            </section>
+
+        </div>
+
+    </main>
+
+<!-- pour les éléments à faire apparaître au scroll -->
+<script>
+    const elements = document.querySelectorAll(".reveal");
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+
+            if (entry.isIntersecting) {
+                entry.target.classList.add("visible");
+            }
+
+        });
+    }, {
+        threshold: 0.2
+    });
+
+    elements.forEach((element) => {
+        observer.observe(element);
+    });
+</script>
+
+
+<!-- pour le cercle autour du curseur -->
+<div class="cursor-circle"></div>
+
+<script>
+    const cursorCircle = document.querySelector(".cursor-circle");
+
+    let mouseX = 0;
+    let mouseY = 0;
+
+    let circleX = 0;
+    let circleY = 0;
+
+    document.addEventListener("mousemove", (event) => {
+        mouseX = event.clientX;
+        mouseY = event.clientY;
+    });
+
+    function animateCursor() {
+        circleX += (mouseX - circleX) * 0.12;
+        circleY += (mouseY - circleY) * 0.12;
+
+        cursorCircle.style.left = circleX + "px";
+        cursorCircle.style.top = circleY + "px";
+
+        requestAnimationFrame(animateCursor);
+    }
+
+    animateCursor();
+</script>
 </body>
 </html>
