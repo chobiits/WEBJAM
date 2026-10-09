@@ -38,7 +38,8 @@ body {
   background-color: navy;
   width: 300px;
   height: 300px;
-  border-radius: 50%;
+  border-radius: 50%;  
+  background-image: url(./images/planet/planet.png);
 }
 #couche-ciel {
   background-color: rgb(255, 255, 255);
@@ -46,7 +47,7 @@ body {
   height: 400px;
   border-radius: 50%;
   filter: blur(10px); /* le ciel est un halo flou autour de la planète */  
-  background-image: url(./images/planet/planet.png);
+
 }
 #couche-sol {
   background-color: khaki;
