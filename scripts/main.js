@@ -6,6 +6,7 @@ const curseur = document.getElementById("echelle-curseur");
 const altitude = document.getElementById("echelle-altitude");
 const scene = document.getElementById("scene");
 const finExperience = document.getElementById("fin-experience");
+const texteFond = document.getElementById("couche-texte");
 
 let redirectionLancee = false;
 
@@ -208,6 +209,7 @@ function mettreAJour() {
 
     }, 2000);
   }
+  texteFond.style.opacity = Math.min(1, Math.max(0, (zoom - 3) / 2)); // le texte apparaît entre le zoom 8 et le zoom 10
   info.textContent = "Zoom : " + zoom;
   altitude.textContent = calculerAltitude();
   curseur.style.bottom = (zoom / ZOOM_MAX) * 100 + "%"; // 0% en bas, 100% en haut
