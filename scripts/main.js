@@ -33,7 +33,7 @@ window.addEventListener("wheel", (e) => {
 const couches = [
   { id: "couche-sol",      niveau: 1,   fin: 9 }, // niveau 1 = zoom x2 sur le sol au départ
   { id: "couche-planete",  niveau: 10,  fin: 11 },
-  { id: "couche-etoiles",  niveau: 10,  fin: 11 },
+  { id: "couche-etoiles",  niveau: 10,  fin: 11, fixe: true }, // fixe = ne change pas de taille, les étoiles sont trop loin
 ];
 
 // 1 m au zoom 0, 10 000 km au zoom 10
@@ -96,7 +96,7 @@ function chargerImages() {
 function mettreAJourCouches() {
   for (const couche of couches) {
     const element = document.getElementById(couche.id);
-    const taille = calculerTaille(couche);
+    const taille = couche.fixe ? 1 : calculerTaille(couche);
     const opacite = Math.min(1, Math.max(0, couche.fin - zoom));
     element.style.transform = `scale(${taille})`;
     element.style.opacity = opacite;

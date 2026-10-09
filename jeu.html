@@ -5,7 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- defer : le script attend que la page soit chargée -->
     <script src="./scripts/main.js" defer></script>
+    <script src="./scripts/transition.js" defer></script>
     <link rel="stylesheet" href="./jeu.css" />
+    <!-- étoiles et fondu entre les pages, partagés avec l'accueil (après jeu.css pour passer par-dessus .couche) -->
+    <link rel="stylesheet" href="./commun.css" />
     <title>Recentrer</title>
 </head>
 <body>
@@ -30,7 +33,7 @@
 
     <!-- les couches, de la plus loin à la plus proche -->
     <div id="scene">
-      <div id="couche-etoiles" class="couche"></div>
+      <div id="couche-etoiles" class="couche etoiles"></div>
       <div id="couche-planete" class="couche"></div>
       <div id="couche-sol" class="couche"></div>
     </div>

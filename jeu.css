@@ -1,6 +1,7 @@
 body {
   margin: 0;
   overflow: hidden;       /* pas de scroll, la molette sert au zoom */
+  background: black;      /* le fondu entre les pages se fait sur du noir */
 }
 
 /* La scène fait la taille des images (1920 x 1080) et reste centrée.
@@ -28,7 +29,7 @@ body {
 }
 
 /* Couleurs de test, remplacées par images/<id>.png quand le fichier existe */
-#couche-etoiles  { background-color: black; }
+#couche-etoiles  { background-color: black; } /* les étoiles viennent de la classe .etoiles (commun.css) */
 #couche-planete  { background-color: navy; width: 300px; height: 300px; border-radius: 50%; }
 #couche-sol      { background-color: khaki; filter: url(#courbure); }
 

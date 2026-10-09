@@ -1,0 +1,147 @@
+/* Styles partagés par l'accueil et le jeu */
+
+/* Fondu entre les pages */
+
+/* chaque page apparaît en fondu quand elle se charge */
+body {
+    animation: fondu-entree 0.5s ease both;
+}
+
+/* classe ajoutée par scripts/transition.js juste avant de changer de page */
+body.fondu-sortie {
+    animation: fondu-sortie 0.5s ease both;
+}
+
+@keyframes fondu-entree {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+@keyframes fondu-sortie {
+    from { opacity: 1; }
+    to   { opacity: 0; }
+}
+
+/* Étoiles */
+
+.etoiles {
+    background-color: #000;
+
+    background-image:
+        radial-gradient(circle at 10% 20%, white 1px, transparent 1.5px),
+        radial-gradient(circle at 20% 80%, white 1px, transparent 1.5px),
+        radial-gradient(circle at 35% 35%, white 1.5px, transparent 2px),
+        radial-gradient(circle at 50% 70%, white 1px, transparent 1.5px),
+        radial-gradient(circle at 65% 15%, white 1px, transparent 1.5px),
+        radial-gradient(circle at 75% 55%, white 1.5px, transparent 2px),
+        radial-gradient(circle at 90% 30%, white 1px, transparent 1.5px),
+        radial-gradient(circle at 85% 85%, white 1px, transparent 1.5px);
+
+    background-size:
+        310px 310px,
+        270px 270px,
+        390px 390px,
+        250px 250px,
+        340px 340px,
+        430px 430px,
+        290px 290px,
+        370px 370px;
+
+    background-repeat: repeat;
+
+    /* Animation de déplacement du fond.
+    derive = nom de l'animation
+    40s = durée d'un cycle complet
+    linear = vitesse constante
+    infinite = recommence à l'infini */
+    animation: derive 40s linear infinite;
+}
+
+/* Étoiles qui scintillent : deux couches à des rythmes différents */
+
+/* ::before et ::after créent deux éléments supplémentaires
+sans avoir besoin d'ajouter du HTML.
+
+Ils sont placés par desus le fond étoilé principal*/
+
+.etoiles::before,
+.etoiles::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+}
+
+.etoiles::before {
+    /* étoiles un peu plus grosses que celles de la couche principale */
+    background-image:
+        radial-gradient(circle at 15% 50%, white 2px, transparent 3px),
+        radial-gradient(circle at 40% 10%, white 1.5px, transparent 2.5px),
+        radial-gradient(circle at 70% 85%, white 2px, transparent 3px),
+        radial-gradient(circle at 95% 60%, white 1.5px, transparent 2.5px);
+
+    /* là aussi chaque étoile a une fréquence de répétition différente */
+    background-size:
+        330px 330px,
+        280px 280px,
+        410px 410px,
+        360px 360px;
+
+    /* varier l'opacité */
+    animation: scintille 3s ease-in-out infinite alternate;
+}
+
+/* Deuxième couche d'étoiles */
+.etoiles::after {
+    background-image:
+        radial-gradient(circle at 25% 25%, white 2px, transparent 3px),
+        radial-gradient(circle at 55% 45%, white 1.5px, transparent 2.5px),
+        radial-gradient(circle at 80% 15%, white 2px, transparent 3px),
+        radial-gradient(circle at 5% 90%, white 1.5px, transparent 2.5px);
+
+    background-size:
+        300px 300px,
+        350px 350px,
+        420px 420px,
+        260px 260px;
+    /* cette couche scintille plus lentement */
+    animation: scintille 5s ease-in-out infinite alternate;
+    animation-delay: -2s;
+}
+
+@keyframes scintille {
+    from { opacity: 0.1; }
+    to   { opacity: 1; }
+}
+
+@keyframes derive {
+    /* position initiale de toutes les couches de background-image */
+    from {
+        background-position: 0 0, 0 0, 0 0, 0 0, 0 0, 0 0, 0 0, 0 0;
+    }
+
+    /* Chaque background est déplacé de la taille de sa propre tuile.*/
+
+    to {
+        background-position:
+            310px 310px,
+            270px 270px,
+            390px 390px,
+            250px 250px,
+            340px 340px,
+            430px 430px,
+            290px 290px,
+            370px 370px;
+    }
+}
+
+/* si l'utilisateur a activé l'option qui demande de réduire les animations, on arrête les animations. */
+
+@media (prefers-reduced-motion: reduce) {
+    body,
+    body.fondu-sortie,
+    .etoiles,
+    .etoiles::before,
+    .etoiles::after {
+        animation: none;
+    }
+}
