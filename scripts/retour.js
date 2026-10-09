@@ -22,7 +22,7 @@ const PAS_ZOOM = 0.1; // ce qu'on enlève au zoom à chaque coup de molette
 const ZOOM_FIN = 1.5;
 const PAUSE_FIN = 3000; // en ms, le temps qu'on reste au sol avant le fondu au noir
 const DUREE_FONDU_FIN = 3000; // en ms, la même durée que l'animation fondu-sortie de commun.css
-const PAGE_ACCUEIL = "home.html";
+const PAGE_ACCUEIL = "index.html";
 const PENTE_ALTITUDE = 0.7; // plus c'est gros, plus l'altitude monte vite
 
 // On fait le chemin du jeu à l'envers : on part de l'espace et on redescend au sol
