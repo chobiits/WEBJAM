@@ -19,7 +19,7 @@ let zoom = 0;
 
 // Dézoom à la molette : vers le haut on monte, on ne peut pas redescendre
 window.addEventListener("wheel", (e) => {
-    if (e.deltaY < 0) {
+    if (e.deltaY > 0) {
         zoom = zoom + 0.1;
     }
     zoom = Math.min(ZOOM_MAX, zoom);
