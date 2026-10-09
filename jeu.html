@@ -1,90 +1,97 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <script src="./scripts/main.js" defer></script>
-  <script src="./scripts/transition.js" defer></script>
-  <script src="./scripts/notifications.js" defer></script>
-  <script src="./scripts/video.js" defer></script>
-  <script src="./scripts/animation.js" defer></script>
-  <script src="./scripts/son.js"></script>
-  <link rel="stylesheet" href="./jeu.css" />
-  <link rel="stylesheet" href="./commun.css" />
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="./scripts/main.js" defer></script>
+    <script src="./scripts/transition.js" defer></script>
+    <script src="./scripts/notifications.js" defer></script>
+    <script src="./scripts/video.js" defer></script>
+    <script src="./scripts/animation.js" defer></script>
+    <script src="./scripts/son.js"></script>
+    <link rel="stylesheet" href="./jeu.css" />
+    <link rel="stylesheet" href="./commun.css" />
   <link rel="stylesheet" href="./notifications.css">
-  <title>NATURE BRUT</title>
-</head>
+    <title>NATURE BRUT</title>
+  </head>
 
-<body>
-  <!-- overlay video decoratif -->
-  <div class="overlay">
-    <video src="./images/overlay.mp4" autoplay muted loop playsinline></video>
-  </div>
-  <!-- niveau de zoom, pour déboguer (caché dans le css) -->
-  <p id="zoom-info">Zoom : 0</p>
+  <body>
+    <!-- overlay video decoratif -->
+    <div class="overlay">
+      <video src="./images/overlay.mp4" autoplay muted loop playsinline></video>
+    </div>
+    <!-- niveau de zoom, pour déboguer (caché dans le css) -->
+    <p id="zoom-info">Zoom : 0</p>
 
-  <!-- échelle d'altitude à gauche -->
-  <div id="echelle">
-    <div id="echelle-barre">
-      <div id="echelle-curseur"><span id="echelle-altitude"></span></div>
+    <!-- échelle d'altitude à gauche -->
+    <div id="echelle">
+      <div id="echelle-barre">
+        <div id="echelle-curseur"><span id="echelle-altitude"></span></div>
+      </div>
+    </div>
+
+    <!-- les couches, de la plus loin à la plus proche -->
+    <div id="scene">
+      <div id="couche-etoiles" class="couche etoiles"></div>
+      <div id="couche-ciel" class="couche"></div>
+      <div id="couche-planete" class="couche"></div>
+      <!-- bâtisses derrière le sol, centrées sur le milieu du haut du sol -->
+      <div id="couche-batisse" class="couche"></div>
+      <div id="couche-sol" class="couche"></div>
+      <!-- batiment pour blender, en avant du sol -->
+      <div id="couche-filler" class="couche"></div>
+    <!-- nuages et satellites animés (scripts/animation.js), collés sur la planète,
+         en avant de la ville pour cacher sa disparition -->
+    <div id="couche-orbite" class="couche">
+      <div id="nuages-1" class="animation" data-dossier="./images/animation-nuage/"></div>
+      <div id="nuages-2" class="animation" data-dossier="./images/animation-nuage/"></div>
+      <div id="satellite-1" class="animation" data-dossier="./images/animation-satelite/"></div>
+      <div id="satellite-2" class="animation" data-dossier="./images/animation-satelite/"></div>
+      <!-- l'avion ne bouge pas, c'est juste une image -->
+      <div id="avion"></div>
     </div>
   </div>
-
-  <!-- les couches, de la plus loin à la plus proche -->
-  <div id="scene">
-    <div id="couche-etoiles" class="couche etoiles"></div>
-    <div id="couche-ciel" class="couche"></div>
-    <div id="couche-planete" class="couche"></div>
-    <!-- bâtisses derrière le sol, centrées sur le milieu du haut du sol -->
-    <div id="couche-batisse" class="couche"></div>
-    <div id="couche-sol" class="couche"></div>
-    <!-- batiment pour blender, en avant du sol -->
-    <div id="couche-filler" class="couche"></div>
-  </div>
-    <!-- exemple d'animation 3 images (le template est dans scripts/animation.js),
-         à placer avec son id dans jeu.css :
-    <div id="nuage" class="animation" data-dossier="./images/animation-nuage/"></div> -->
     <div id="notifications"></div>
     <!-- Écran de fin : apparaît quand on arrive à 10 000 km -->
     <!-- Message de transition à la fin du dézoom -->
     <div id="fin-experience" class="fin-experience">
       <p>Retrouvez l'équilibre.</p>
     </div>
-    
-</body>
+
+  </body>
 
 <!-- pour le cercle autour du curseur -->
 <div class="cursor-circle"></div>
 
-<script>
-  // Récupère le cercle créé juste au-dessus
-  const cursorCircle = document.querySelector(".cursor-circle");
+  <script>
+    // Récupère le cercle créé juste au-dessus
+    const cursorCircle = document.querySelector(".cursor-circle");
 
-  // Position de la souris    
-  let mouseX = 0;
-  let mouseY = 0;
+    // Position de la souris
+    let mouseX = 0;
+    let mouseY = 0;
 
-  let circleX = 0;
-  let circleY = 0;
-  // "écoute" les déplacements de la souris
-  document.addEventListener("mousemove", (event) => {
-    mouseX = event.clientX;
-    mouseY = event.clientY;
-  });
+    let circleX = 0;
+    let circleY = 0;
+    // "écoute" les déplacements de la souris
+    document.addEventListener("mousemove", (event) => {
+      mouseX = event.clientX;
+      mouseY = event.clientY;
+    });
 
-  function animateCursor() {
-    // mouvement fluide avec un léger retard
-    circleX += (mouseX - circleX) * 0.12;
-    circleY += (mouseY - circleY) * 0.12;
+    function animateCursor() {
+      // mouvement fluide avec un léger retard
+      circleX += (mouseX - circleX) * 0.12;
+      circleY += (mouseY - circleY) * 0.12;
 
-    cursorCircle.style.left = circleX + "px";
-    cursorCircle.style.top = circleY + "px";
+      cursorCircle.style.left = circleX + "px";
+      cursorCircle.style.top = circleY + "px";
 
-    requestAnimationFrame(animateCursor);
-  }
-  // Demande de relancer cette fonction à la prochaine image affichée
-  animateCursor();
-</script>
+      requestAnimationFrame(animateCursor);
+    }
+    // Demande de relancer cette fonction à la prochaine image affichée
+    animateCursor();
+  </script>
 
 </html>

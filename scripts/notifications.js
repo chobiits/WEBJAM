@@ -190,11 +190,6 @@ const notifications = [
     texte: "+4182323289",
     heure: "il y'a deux minutes", dx: 10, dy: 2
   },
-  {
-    app: "Téléphone", icone: "📞", couleur: "#34c759", appel: true, titre: "Appel entrant",
-    texte: "+4182323289",
-    heure: "il y'a deux minutes", dx: 10, dy: 2
-  },
 
   {
     app: "Messages", icone: "💬", couleur: "#999", rond: true, photo: "./images/chantal.jpg", titre: "Doudou ❤️",

@@ -1,9 +1,16 @@
 /* Styles partagés par l'accueil et le jeu */
 
+/* La police du site (titres et textes), le fichier est dans fonts/ */
+@font-face {
+    font-family: "Bebas Neue";
+    src: url("./fonts/BebasNeue-Regular.ttf");
+}
+
 /* Fondu entre les pages */
 
 /* chaque page apparaît en fondu quand elle se charge */
 body {
+    font-family: "Bebas Neue", Arial, sans-serif; /* Arial en attendant que Bebas Neue charge */
     animation: fondu-entree 0.5s ease both;
     overflow-x: hidden; /* pour éviter un scroll horizontal quand le zoom est trop grand */
 }

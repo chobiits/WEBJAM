@@ -1,4 +1,4 @@
-// Template d'animation : 3 images qui changent toutes les 2 secondes, en boucle.
+// Template d'animation : 3 images qui changent toutes les 500 ms, en boucle.
 //
 // Pour ajouter une animation :
 // 1. mettre les 3 images dans un dossier, nommées 1.png, 2.png et 3.png
@@ -8,7 +8,7 @@
 // 3. lui donner sa place et sa taille dans le css avec son id (voir .animation dans jeu.css)
 
 const NOMBRE_FRAMES = 3;
-const DUREE_FRAME = 2000; // en ms, le temps qu'une image reste affichée
+const DUREE_FRAME = 500; // en ms, le temps qu'une image reste affichée
 // si l'utilisateur a demandé de réduire les animations (comme dans commun.css), on reste sur la première image
 const animationsArretees = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
