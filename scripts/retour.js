@@ -1,0 +1,258 @@
+console.log("retour.js est bien charge");
+
+// Éléments du HTML
+const info = document.getElementById("zoom-info");
+const curseur = document.getElementById("echelle-curseur");
+const altitude = document.getElementById("echelle-altitude");
+const scene = document.getElementById("scene");
+
+let redirectionLancee = false;
+
+// Réglages
+const LARGEUR_IMAGE = 1920;
+const HAUTEUR_IMAGE = 1080;
+const RAYON_PLANETE = 150; // la moitié des 300px du css
+const HORIZON_VILLE = 540; // où le sommet de la planète arrive dans ville.png (le milieu de 1080)
+// Le centre du gros papillon dans la scène quand rien n'est grossi : c'est là que la descente finit.
+// Il est dans l'image du sol (ville2), qui couvre toute la scène
+const PAPILLON_X = 1267;
+const PAPILLON_Y = 254;
+const DOSSIER_IMAGES = "./images/"; // une image par couche, nommée comme son id (ex. couche-sol.png)
+const ZOOM_MAX = 10;
+const PAS_ZOOM = 0.1; // ce qu'on enlève au zoom à chaque coup de molette
+// La descente arrête un peu avant le sol (zoom 0), sinon le papillon est trop gros à l'écran
+// ex. à 0.5 le sol est grossi 5 fois au lieu de 6.5
+const ZOOM_FIN = 1.5;
+const PAUSE_FIN = 6000; // en ms, le temps qu'on reste au sol avant le fondu au noir
+const DUREE_FONDU_FIN = 3000; // en ms, la même durée que l'animation fondu-sortie de commun.css
+const PAGE_ACCUEIL = "home.html";
+const PENTE_ALTITUDE = 0.7; // plus c'est gros, plus l'altitude monte vite
+
+// On fait le chemin du jeu à l'envers : on part de l'espace et on redescend au sol
+let zoom = ZOOM_MAX; // 0 = au sol, 10 = on voit la planète au complet
+
+// Les couches de la scène
+// niveau = zoom où la couche est à sa taille normale
+// depart = sa taille au zoom 0
+// debut  = zoom où la couche commence à être affichée
+// entree = sur combien de zoom elle apparaît en fondu à partir de debut (0 = elle est là d'un coup)
+// fin    = zoom où la couche a disparu
+// fondu  = sur combien de zoom elle s'efface avant fin
+// fixe   = true si elle ne change pas de taille
+const couches = [
+  // La ville a trois profondeurs : la bâtisse (loin), le sol (milieu), le filler (proche).
+  // Plus une couche est proche, plus elle est grosse au début (depart) et plus elle rapetisse vite,
+  // c'est ça qui fait la parallaxe. Les trois arrivent presque à la même taille (x0.2) au zoom 6.
+  // Elles rapetissent juste un peu plus vite que la planète :
+  // par zoom, planète x0.63, bâtisse x0.58, sol x0.57, filler x0.54
+  { id: "couche-sol", niveau: 3.3, depart: 6.5, debut: 0, entree: 0, fin: 7, fondu: 1.5, fixe: false },
+  // depart 100 = entre 20 (le sol rapetisse beaucoup plus vite que la planète)
+  // et 1024 (la planète rapetisse aussi vite que le sol)
+  { id: "couche-planete", niveau: 10, depart: 100, debut: 0, entree: 0, fin: 11, fondu: 1, fixe: false },
+  // le ciel disparaît avant la planète sinon on voit du ciel derrière la planète
+  // il s'efface du zoom 4 au zoom 8
+  // même niveau et même depart que la planète, sinon les deux se décalent
+  { id: "couche-ciel", niveau: 10, depart: 100, debut: 0, entree: 0, fin: 8, fondu: 4, fixe: false },
+  // les étoiles sont trop loin pour changer de taille
+  // debut 3.5 : avant, le ciel les cache au complet, pas besoin de les animer pour rien
+  { id: "couche-etoiles", niveau: 10, depart: 1, debut: 3.5, entree: 0, fin: 11, fondu: 1, fixe: true },
+  // la plus loin de la ville, donc la plus petite au début et la plus lente
+  // depart 5 : la fleur fait 39px de large, x5 = environ 1/10 de la largeur de l'écran (192px)
+  // elle finit de disparaître en même temps que le sol (zoom 7)
+  { id: "couche-batisse", niveau: 3, depart: 5, debut: 0, entree: 0, fin: 7, fondu: 1, fixe: false },
+  // les bâtiments en avant du sol : les plus proches, donc les plus gros au début et les plus rapides
+  { id: "couche-filler", niveau: 3.6, depart: 9, debut: 0, entree: 0, fin: 7, fondu: 1.5, fixe: false },
+  // les nuages et les satellites (animés par animation.js), en avant de la ville pour cacher sa disparition
+  // même niveau et même depart que la planète pour rester collés dessus
+  // ils apparaissent en fondu du zoom 4.8 au zoom 5.5, juste avant que la ville commence à s'effacer
+  { id: "couche-orbite", niveau: 10, depart: 100, debut: 4.8, entree: 0.7, fin: 11, fondu: 1, fixe: false },
+];
+
+// 1 m au zoom 0, 10 000 km au zoom 10
+function calculerAltitude() {
+  const metres = Math.pow(10, zoom * PENTE_ALTITUDE);
+
+  if (metres < 1000) {
+    return Math.round(metres) + " m";
+  }
+  return Math.round(metres / 1000) + " km";
+}
+
+// La couche part de sa taille "depart" au zoom 0 et arrive à x1 à son niveau
+// ex. la bâtisse (depart 5, niveau 3) : zoom 0 = x5, zoom 3 = x1, zoom 6 = x0.2
+// ex. la planète (depart 100, niveau 10) : zoom 0 = x100, zoom 5 = x10, zoom 10 = x1
+function calculerTaille(couche) {
+  return Math.pow(couche.depart, 1 - zoom / couche.niveau);
+}
+
+// 1 = visible, 0 = invisible
+// ex. le ciel (fin 8, fondu 4) au zoom 6 : (8 - 6) / 4 = 0.5
+// Si la couche a une entree, elle apparaît aussi en fondu au début
+// ex. les nuages (debut 4.8, entree 0.7) au zoom 5 : (5 - 4.8) / 0.7 = 0.29
+function calculerOpacite(couche) {
+  let opacite = (couche.fin - zoom) / couche.fondu;
+
+  // pendant l'entrée, on prend le fondu d'entrée s'il est plus petit
+  if (couche.entree > 0) {
+    const opaciteEntree = (zoom - couche.debut) / couche.entree;
+    if (opaciteEntree < opacite) {
+      opacite = opaciteEntree;
+    }
+  }
+
+  // il faut rester entre 0 et 1
+  if (opacite > 1) {
+    opacite = 1;
+  }
+  if (opacite < 0) {
+    opacite = 0;
+  }
+  return opacite;
+}
+
+
+// Met l'image de chaque couche si le fichier existe, sinon la couleur du css reste
+function chargerImages() {
+  for (const couche of couches) {
+    const element = document.getElementById(couche.id);
+    const chemin = DOSSIER_IMAGES + couche.id + ".png";
+    const image = new Image(); // image pas affichée, juste pour tester si le fichier existe
+
+    // ça roule seulement si l'image a réussi à charger
+    image.onload = function () {
+      element.style.backgroundImage = 'url("' + chemin + '")';
+      element.style.backgroundColor = "transparent"; // sinon la couleur se voit à travers le png
+      element.style.borderRadius = "0"; // c'est le png qui donne la forme de la planète
+    };
+
+    image.src = chemin; // c'est ça qui lance le chargement
+  }
+}
+
+// Chaque couche rétrécit quand on monte et laisse voir celle d'en arrière
+function mettreAJourCouches() {
+  // Tout le monde glisse du même nombre de pixels pour que le papillon arrive au milieu de l'écran.
+  // Sans ça, c'est le point de l'horizon qui resterait au milieu.
+  // Plus le sol est petit, plus le papillon est proche de l'horizon, donc le glissement est à 0
+  // dans l'espace et la planète est centrée toute seule au départ
+  // (on prend la taille du sol parce que c'est dans son image que le papillon est)
+  const tailleSol = calculerTaille(couches[0]);
+  const glisseX = (LARGEUR_IMAGE / 2 - PAPILLON_X) * tailleSol;
+  const glisseY = (calculerHorizon() - PAPILLON_Y) * tailleSol;
+
+  for (const couche of couches) {
+    const element = document.getElementById(couche.id);
+
+    let taille = 1;
+    if (couche.fixe === false) {
+      taille = calculerTaille(couche);
+    }
+
+    const opacite = calculerOpacite(couche);
+
+    if (couche.fixe === false) {
+      // translate en premier : le glissement est en px de l'écran, il n'est pas grossi par scale
+      element.style.transform = "translate(" + glisseX + "px, " + glisseY + "px) scale(" + taille + ")";
+    }
+    element.style.opacity = opacite;
+
+    // couche-cachee est dans jeu.css
+    // une couche cachée ne coûte rien au navigateur, ça aide contre le lag
+    if (opacite === 0 || zoom < couche.debut) {
+      element.classList.add("couche-cachee");
+    } else {
+      element.classList.remove("couche-cachee");
+    }
+  }
+}
+
+// L'horizon est au milieu de l'écran au zoom 0, puis il monte
+// pour que la planète soit centrée au zoom max
+function calculerHorizon() {
+  const progression = zoom / ZOOM_MAX; // de 0 à 1
+  return HAUTEUR_IMAGE / 2 - RAYON_PLANETE * progression;
+}
+
+function mettreAJourHorizon() {
+  const horizon = calculerHorizon();
+
+  // --horizon est la variable css dans jeu.css, le sol et la planète se placent avec
+  scene.style.setProperty("--horizon", horizon + "px");
+
+  // L'horizon monte avec le zoom, mais le sommet de la planète doit rester
+  // au milieu de l'image du sol, alors on redescend la planète de la différence.
+  // L'écart à l'écran dépend de la taille du sol, et il faut le diviser par
+  // la taille de la planète parce que le css le grossit avec elle
+  const sol = couches[0];
+  const planete = couches[1];
+  const ecart = (HORIZON_VILLE - horizon) * calculerTaille(sol);
+  const decalage = ecart / calculerTaille(planete);
+
+  scene.style.setProperty("--decalage", decalage + "px");
+}
+
+// À appeler chaque fois que le zoom change
+function mettreAJour() {
+  mettreAJourHorizon(); // avant les couches, elles se placent par rapport à l'horizon
+  info.textContent = "Zoom : " + zoom;
+  altitude.textContent = calculerAltitude();
+  curseur.style.bottom = (zoom / ZOOM_MAX) * 100 + "%"; // 0% en bas, 100% en haut
+  mettreAJourCouches();
+
+  // Quand on est revenu au sol : on laisse regarder la ville un peu,
+  // puis fondu au noir et retour à l'accueil
+  if (zoom <= ZOOM_FIN && redirectionLancee === false) {
+    redirectionLancee = true; // pour ne pas le lancer deux fois
+
+    setTimeout(() => {
+      // fondu-sortie est dans commun.css, c'est le même fondu que transition.js
+      document.body.classList.add("fondu-sortie");
+
+      // on change de page seulement quand l'écran est noir
+      setTimeout(() => {
+        window.location.href = PAGE_ACCUEIL;
+      }, DUREE_FONDU_FIN);
+    }, PAUSE_FIN);
+  }
+}
+
+// Agrandit la scène pour qu'elle remplisse l'écran
+function ajusterScene() {
+  const echelleLargeur = window.innerWidth / LARGEUR_IMAGE;
+  const echelleHauteur = window.innerHeight / HAUTEUR_IMAGE;
+
+  // on prend la plus grande des deux pour ne pas laisser de vide
+  let echelle = echelleLargeur;
+  if (echelleHauteur > echelleLargeur) {
+    echelle = echelleHauteur;
+  }
+
+  scene.style.transform = "scale(" + echelle + ")";
+}
+
+// Zoom à la molette, on peut juste descendre, pas remonter
+// (dans le jeu on monte en tournant vers le bas, ici on redescend en tournant vers le haut)
+// Pas de notifications ici : rien n'arrête la descente
+function quandMoletteTourne(evenement) {
+  // deltaY négatif = molette vers le haut (le sens contraire du jeu)
+  if (evenement.deltaY < 0) {
+    zoom = zoom - PAS_ZOOM;
+  }
+
+  if (zoom < ZOOM_FIN) {
+    zoom = ZOOM_FIN;
+  }
+
+  zoom = Math.round(zoom * 10) / 10; // garde 1 décimale, évite les 0.30000000000000004
+  console.log("Zoom : " + zoom);
+
+  mettreAJour();
+}
+
+window.addEventListener("wheel", quandMoletteTourne);
+window.addEventListener("resize", ajusterScene);
+
+// Au chargement de la page
+ajusterScene();
+chargerImages();
+mettreAJour();

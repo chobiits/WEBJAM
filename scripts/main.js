@@ -205,9 +205,9 @@ function mettreAJour() {
       // attend les 500 ms du fondu déjà utilisé par transition.js
       setTimeout(() => {
         window.location.href = "retour.html";
-      }, 500);
+      }, 700);
 
-    }, 2000);
+    }, 5000);
   }
   texteFond.style.opacity = Math.min(1, Math.max(0, (zoom - 3) / 2)); // le texte apparaît entre le zoom 8 et le zoom 10
   info.textContent = "Zoom : " + zoom;
