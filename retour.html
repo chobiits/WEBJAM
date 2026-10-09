@@ -53,16 +53,13 @@
 <div class="cursor-circle"></div>
 
   <script>
-    // Récupère le cercle créé juste au-dessus
     const cursorCircle = document.querySelector(".cursor-circle");
 
-    // Position de la souris
     let mouseX = 0;
     let mouseY = 0;
 
     let circleX = 0;
     let circleY = 0;
-    // "écoute" les déplacements de la souris
     document.addEventListener("mousemove", (event) => {
       mouseX = event.clientX;
       mouseY = event.clientY;
@@ -78,7 +75,6 @@
 
       requestAnimationFrame(animateCursor);
     }
-    // Demande de relancer cette fonction à la prochaine image affichée
     animateCursor();
   </script>
 

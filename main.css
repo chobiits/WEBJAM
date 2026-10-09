@@ -11,9 +11,9 @@ html {
 
 body {
     margin: 0;
-    background: #000;
-    color: #fff;
-    font-family: "Bebas Neue", Arial, sans-serif;
+    background: var(--onyx);
+    color: var(--porcelaine);
+    font-family: "Bebas Neue", Arial, sans-serif; /* les titres ; les textes sont en Inter Tight */
 }
 
 /* Étoiles : le dessin et les animations sont dans commun.css, ici juste le placement */
@@ -42,7 +42,7 @@ body {
 }
 
 .main-nav a {
-    color: #fff;
+    color: var(--porcelaine);
     text-decoration: none;
     text-transform: uppercase;
     font-size: 14px;
@@ -94,7 +94,7 @@ body {
 
 .subtitle {
     margin: 0;
-    color: #d1d1d1;
+    color: var(--porcelaine);
     font-size: 24px;
     letter-spacing: 2px;
 }
@@ -104,11 +104,12 @@ body {
 .start-button {
     margin-top: 20px;
     padding: 15px 25px;
-    border: 5px solid #FFB443;
-    color: #fff;
+    border: 5px solid var(--or);
+    color: var(--porcelaine);
     background: transparent;
     text-decoration: none;
     text-transform: uppercase;
+    font-family: "Inter Tight", Arial, sans-serif;
     font-size: 14px;
     letter-spacing: 3px;
     border-radius: 15px;
@@ -120,9 +121,9 @@ body {
 }
 
 .start-button:hover {
-    background: #fff;
-    color: #000;
-    border: 5px solid #fff;
+    background: var(--porcelaine);
+    color: var(--onyx);
+    border: 5px solid var(--porcelaine);
 }
 
 /* Synopsis et équipe */
@@ -145,15 +146,26 @@ body {
     margin-right: 0;
     margin-bottom: 30px;
     margin-left: 0;
-    color: #111;
+    color: var(--onyx);
     font-size: 48px;
     text-transform: uppercase;
+}
+
+/* petite barre rose sous les titres */
+.info-section h2::after {
+    content: "";
+    display: block;
+    width: 80px;
+    height: 6px;
+    margin-top: 10px;
+    background: var(--rose);
 }
 
 .info-section p {
     max-width: 750px;
     margin: 0;
-    color: rgba(0, 0, 0, 0.75);
+    font-family: "Inter Tight", Arial, sans-serif;
+    color: rgba(22, 19, 22, 0.75);
     font-size: 20px;
     line-height: 2;
 }
@@ -166,7 +178,9 @@ body {
 
 .info-section li {
     margin-bottom: 15px;
-    color: rgba(0, 0, 0, 0.85);
+    color: rgba(22, 19, 22, 0.85);
+    font-family: "Inter Tight", Arial, sans-serif;
+    font-weight: 600;
     font-size: 22px;
 }
 
@@ -211,8 +225,9 @@ body {
 
 .contenu-clair {
     position: relative;
-    background-color: #eeeeea;
-    color: #111;
+    padding-top: 60px; /* un peu d'espace entre le menu et le contenu */
+    background-color: var(--porcelaine);
+    color: var(--onyx);
     overflow: hidden;
 }
 
@@ -278,9 +293,10 @@ body {
     padding-top: 30px;
     padding-bottom: 25px;
 
-    color: rgba(0, 0, 0, 0.65);
+    color: rgba(22, 19, 22, 0.65);
 
     text-align: center;
+    font-family: "Inter Tight", Arial, sans-serif;
     font-size: 12px;
 }
 

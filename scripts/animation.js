@@ -14,8 +14,8 @@ const animationsArretees = window.matchMedia("(prefers-reduced-motion: reduce)")
 
 // Part l'animation d'un élément
 function demarrerAnimation(element) {
-  const dossier = element.dataset.dossier; // ce qui est écrit dans data-dossier
-  let frame = 1; // l'image affichée en ce moment : 1, 2 ou 3
+  const dossier = element.dataset.dossier;
+  let frame = 1;
 
   // On charge les 3 images tout de suite, sinon il y aurait un trou
   // la première fois que chaque image s'affiche
@@ -31,7 +31,7 @@ function demarrerAnimation(element) {
   function prochaineFrame() {
     frame = frame + 1;
     if (frame > NOMBRE_FRAMES) {
-      frame = 1; // après la dernière image on recommence à la première
+      frame = 1;
     }
     afficherFrame();
   }

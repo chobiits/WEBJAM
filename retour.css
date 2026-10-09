@@ -1,7 +1,7 @@
 body {
   margin: 0;
   overflow: hidden; /* pas de scroll, la molette sert au zoom */
-  background: black; /* le fondu entre les pages se fait sur du noir */
+  background: var(--onyx); /* le fondu entre les pages se fait sur du noir */
 }
 
 /* La scène fait la taille des images (1920 x 1080) et reste centrée.
@@ -35,7 +35,7 @@ body {
 
 /* Couleurs de test, remplacées par images/<id>.png quand le fichier existe */
 #couche-etoiles {
-  background-color: black;
+  background-color: var(--onyx);
 } /* les étoiles viennent de la classe .etoiles (commun.css) */
 #couche-planete {
   background-color: rgba(0, 0, 128, 0);
@@ -44,7 +44,7 @@ body {
   background-image: url(./images/planet2/planet2-leger.png);
 }
 #couche-ciel {
-  background-color: rgb(255, 255, 255);
+  background-color: var(--porcelaine);
   width: 400px; /* plus grand que la planète, sinon il est caché derrière */
   height: 400px;
   border-radius: 50%;
@@ -158,10 +158,10 @@ body {
   height: 14px;
   border-radius: 50%;
 
-  background: #f7c600;
+  background: var(--or);
   box-shadow:
-    0 0 0 3px rgba(247, 198, 0, 0.18),
-    0 0 12px rgba(247, 198, 0, 0.35);
+    0 0 0 3px rgba(255, 180, 51, 0.18),
+    0 0 12px rgba(255, 180, 51, 0.35);
 
   transform: translate(-50%, 50%);
   transition: bottom 0.2s ease;
@@ -181,7 +181,7 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 999px;
 
-  color: #fff;
+  color: var(--porcelaine);
   font-family: "Bebas Neue", Arial, sans-serif;
   font-size: 18px;
   font-weight: 700;
@@ -232,7 +232,7 @@ body {
 .fin-experience p {
   margin: 0;
 
-  color: white;
+  color: var(--porcelaine);
   font-size: 100px;
   letter-spacing: 2px;
 
