@@ -199,9 +199,8 @@ function ajusterScene() {
   scene.style.transform = "scale(" + echelle + ")";
 }
 
-// Dézoom à la molette, on peut juste monter, pas redescendre
+// Dézoom à la molette
 function quandMoletteTourne(evenement) {
-  // il faut fermer les notifications avant de continuer à monter
   // (la fonction est dans notifications.js)
   if (notificationsAffichees()) {
     return;

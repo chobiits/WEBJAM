@@ -1,11 +1,5 @@
-// Template d'animation : 3 images qui changent toutes les 500 ms, en boucle.
-//
-// Pour ajouter une animation :
-// 1. mettre les 3 images dans un dossier, nommées 1.png, 2.png et 3.png
-//    (ex. images/animation-nuage/)
-// 2. ajouter dans le html un élément avec la classe "animation" et le dossier dans data-dossier :
-//    <div id="nuage" class="animation" data-dossier="./images/animation-nuage/"></div>
-// 3. lui donner sa place et sa taille dans le css avec son id (voir .animation dans jeu.css)
+// 3 images qui changent toutes les 500 ms en boucle
+
 
 const NOMBRE_FRAMES = 3;
 const DUREE_FRAME = 500; // en ms, le temps qu'une image reste affichée

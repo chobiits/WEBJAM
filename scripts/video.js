@@ -1,6 +1,6 @@
 // La texture vidéo du jeu fige toute seule après quelques secondes
 // (le navigateur n'arrive pas à suivre avec toutes les couches de la scène).
-// Ici on la surveille : si elle n'a pas avancé depuis la dernière vérification, on la relance.
+// si elle n'a pas avancé depuis la dernière vérification, on la relance.
 
 const videoTexture = document.querySelector(".overlay video");
 const DELAI_SURVEILLANCE = 500; // en ms

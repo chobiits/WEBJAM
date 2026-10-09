@@ -156,9 +156,7 @@ function mettreAJourSonsRetour() {
 
 
         /* SON DE MOUVEMENT
-
-           Cette fois le zoom DIMINUE,
-           donc on détecte zoom < zoomPrecedentRetour. */
+        Cette fois le zoom diminue, donc on détecte zoom < zoomPrecedentRetour. */
 
         if (zoom < zoomPrecedentRetour) {
 
