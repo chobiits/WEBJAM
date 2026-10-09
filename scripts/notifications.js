@@ -194,7 +194,7 @@ const notifications = [
   },
 
   {
-    app: "Messages", icone: "💬", couleur: "#999", rond: true, photo: "./images/chantal.jpg", titre: "Doudou ❤️",
+    app: "Messages", icone: "💬", couleur: "#999", rond: true, photo: "./images/chantal.jpg", titre: "Chantal Cox ❤️",
     texte: "Répond bébé stp",
     heure: "maintenant", dx: 150, dy: 80
   },
