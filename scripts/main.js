@@ -10,6 +10,7 @@ const scene = document.getElementById("scene");
 const LARGEUR_IMAGE = 1920;
 const HAUTEUR_IMAGE = 1080;
 const RAYON_PLANETE = 150; // la moitié des 300px du css
+const HORIZON_VILLE = 540; // où le sommet de la planète arrive dans ville.png (le milieu de 1080)
 const DOSSIER_IMAGES = "./images/"; // une image par couche, nommée comme son id (ex. couche-sol.png)
 const ZOOM_MAX = 10;
 const PAS_ZOOM = 0.1; // ce qu'on ajoute au zoom à chaque coup de molette
@@ -20,17 +21,32 @@ let zoom = 0; // 0 = au sol, 10 = on voit la planète au complet
 // Les couches de la scène
 // niveau = zoom où la couche est à sa taille normale
 // depart = sa taille au zoom 0
+// debut  = zoom où la couche commence à être affichée
 // fin    = zoom où la couche a disparu
 // fondu  = sur combien de zoom elle s'efface avant fin
 // fixe   = true si elle ne change pas de taille
+// flouDepart = son flou (en px à l'écran) jusqu'au zoom flouDebut
+// flouDebut  = zoom où le flou commence à changer
+// flouFin    = son flou quand elle a disparu (ou au zoom max)
 const couches = [
-  { id: "couche-sol", niveau: 1, depart: 2, fin: 6, fondu: 1, fixe: false }, // zoom x2 sur le sol au départ
-  { id: "couche-planete", niveau: 10, depart: 20, fin: 11, fondu: 1, fixe: false }, // à 20 elle dépasse déjà de l'écran
+  // le sol devient de plus en plus flou à mesure qu'il s'éloigne
+  // zoom x2 sur le sol au départ
+  { id: "couche-sol", niveau: 1, depart: 2, debut: 0, fin: 6, fondu: 1, fixe: false, flouDepart: 0, flouDebut: 0, flouFin: 8 },
+  // depart 100 = entre 20 (le sol rapetisse beaucoup plus vite que la planète)
+  // et 1024 (la planète rapetisse aussi vite que le sol)
+  // un peu floue au début parce qu'elle est très grossie, nette à la fin
+  { id: "couche-planete", niveau: 10, depart: 100, debut: 0, fin: 11, fondu: 1, fixe: false, flouDepart: 6, flouDebut: 0, flouFin: 0 },
   // le ciel disparaît avant la planète sinon on voit du ciel derrière la planète
   // il s'efface du zoom 4 au zoom 8
   // même niveau et même depart que la planète, sinon les deux se décalent
-  { id: "couche-ciel", niveau: 10, depart: 20, fin: 8, fondu: 4, fixe: false },
-  { id: "couche-etoiles", niveau: 10, depart: 1, fin: 11, fondu: 1, fixe: true }, // les étoiles sont trop loin pour changer de taille
+  // pas de flou ici, le ciel a déjà le sien dans jeu.css
+  { id: "couche-ciel", niveau: 10, depart: 100, debut: 0, fin: 8, fondu: 4, fixe: false, flouDepart: 0, flouDebut: 0, flouFin: 0 },
+  // les étoiles sont trop loin pour changer de taille
+  // debut 3.5 : avant, le ciel les cache au complet, pas besoin de les animer pour rien
+  { id: "couche-etoiles", niveau: 10, depart: 1, debut: 3.5, fin: 11, fondu: 1, fixe: true, flouDepart: 0, flouDebut: 0, flouFin: 0 },
+  // même niveau et même depart que le sol pour rester collée dessus,
+  // mais elle reste nette jusqu'au zoom 3 et disparaît un peu après lui
+  { id: "couche-batisse", niveau: 1, depart: 2, debut: 0, fin: 7, fondu: 1, fixe: false, flouDepart: 0, flouDebut: 3, flouFin: 8 },
 ];
 
 // 1 m au zoom 0, 10 000 km au zoom 10
@@ -45,7 +61,7 @@ function calculerAltitude() {
 
 // La couche part de sa taille "depart" au zoom 0 et arrive à x1 à son niveau
 // ex. le sol (depart 2, niveau 1) : zoom 0 = x2, zoom 1 = x1, zoom 2 = x0.5
-// ex. la planète (depart 20, niveau 10) : zoom 0 = x20, zoom 5 = x4.5, zoom 10 = x1
+// ex. la planète (depart 100, niveau 10) : zoom 0 = x100, zoom 5 = x10, zoom 10 = x1
 function calculerTaille(couche) {
   return Math.pow(couche.depart, 1 - zoom / couche.niveau);
 }
@@ -63,6 +79,27 @@ function calculerOpacite(couche) {
     opacite = 0;
   }
   return opacite;
+}
+
+// Le flou passe de flouDepart (au zoom flouDebut) à flouFin (quand la couche a disparu)
+// ex. le sol (flouFin 8, fin 6) au zoom 3 : 8 * 3 / 6 = 4px
+function calculerFlou(couche) {
+  // la planète finit au zoom 11, mais on ne peut pas dépasser le zoom max
+  let dernierZoom = couche.fin;
+  if (dernierZoom > ZOOM_MAX) {
+    dernierZoom = ZOOM_MAX;
+  }
+
+  // de 0 (au zoom flouDebut) à 1 (au dernier zoom)
+  let progression = (zoom - couche.flouDebut) / (dernierZoom - couche.flouDebut);
+  if (progression < 0) {
+    progression = 0;
+  }
+  if (progression > 1) {
+    progression = 1;
+  }
+
+  return couche.flouDepart + (couche.flouFin - couche.flouDepart) * progression;
 }
 
 // Met l'image de chaque couche si le fichier existe, sinon la couleur du css reste
@@ -98,8 +135,16 @@ function mettreAJourCouches() {
     element.style.transform = "scale(" + taille + ")";
     element.style.opacity = opacite;
 
+    // le css applique le flou avant de grossir la couche, donc il serait grossi lui aussi
+    // on le divise par la taille pour qu'il garde la même épaisseur à l'écran
+    if (couche.flouDepart !== 0 || couche.flouFin !== 0) {
+      const flou = calculerFlou(couche) / taille;
+      element.style.filter = "blur(" + flou + "px)";
+    }
+
     // couche-cachee est dans jeu.css
-    if (opacite === 0) {
+    // une couche cachée ne coûte rien au navigateur, ça aide contre le lag
+    if (opacite === 0 || zoom < couche.debut) {
       element.classList.add("couche-cachee");
     } else {
       element.classList.remove("couche-cachee");
@@ -115,6 +160,17 @@ function mettreAJourHorizon() {
 
   // --horizon est la variable css dans jeu.css, le sol et la planète se placent avec
   scene.style.setProperty("--horizon", horizon + "px");
+
+  // L'horizon monte avec le zoom, mais le sommet de la planète doit rester
+  // au milieu de l'image du sol, alors on redescend la planète de la différence.
+  // L'écart à l'écran dépend de la taille du sol, et il faut le diviser par
+  // la taille de la planète parce que le css le grossit avec elle
+  const sol = couches[0];
+  const planete = couches[1];
+  const ecart = (HORIZON_VILLE - horizon) * calculerTaille(sol);
+  const decalage = ecart / calculerTaille(planete);
+
+  scene.style.setProperty("--decalage", decalage + "px");
 }
 
 // À appeler chaque fois que le zoom change
