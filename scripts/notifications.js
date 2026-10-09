@@ -4,6 +4,8 @@ const conteneurNotifications = document.getElementById("notifications"); // le c
 const animationsReduites = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 
+
+
 const notifications = [
    {
     app: "Messages", icone: "M", couleur: "linear-gradient(#a5acb8, #858a96)", rond: true, titre: "Maxime",
@@ -313,3 +315,4 @@ function verifierNotifications(zoom) {
 function notificationsAffichees() {
   return conteneurNotifications.children.length > 0;
 }
+
