@@ -1,0 +1,277 @@
+body {
+  margin: 0;
+  overflow: hidden; /* pas de scroll, la molette sert au zoom */
+  background: black; /* le fondu entre les pages se fait sur du noir */
+}
+
+/* La scène fait la taille des images (1920 x 1080) et reste centrée.
+   C'est le js qui l'agrandit pour remplir l'écran. */
+#scene {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  width: 1920px;
+  height: 1080px;
+  margin: -540px 0 0 -960px; /* la moitié de la taille, pour centrer */
+}
+
+/* Toutes les couches sont empilées au même endroit */
+.couche {
+  position: absolute;
+  inset: 0;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  transition:
+    transform 0.2s,
+    opacity 0.2s;
+  /* dit au navigateur de garder la couche prête sur la carte graphique
+     au lieu de la redessiner à chaque coup de molette (moins de lag) */
+  will-change: transform, opacity;
+}
+
+.couche-cachee {
+  display: none;
+}
+
+/* Couleurs de test, remplacées par images/<id>.png quand le fichier existe */
+#couche-etoiles {
+  background-color: black;
+} /* les étoiles viennent de la classe .etoiles (commun.css) */
+#couche-planete {
+  background-color: rgba(0, 0, 128, 0);
+  width: 300px;
+  height: 300px; 
+  background-image: url(./images/planet2/planet2-leger.png);
+}
+#couche-ciel {
+  background-color: rgb(255, 255, 255);
+  width: 400px; /* plus grand que la planète, sinon il est caché derrière */
+  height: 400px;
+  border-radius: 50%;
+  filter: blur(10px); /* le ciel est un halo flou autour de la planète */  
+
+}
+#couche-sol {
+  background-color: rgba(240, 230, 140, 0);
+  /* les images "-leger" sont des copies plus petites des originales (5760px de large),
+     trop lourdes pour le navigateur */
+  background-image: url(./images/planet2/ville2-leger.png);
+}
+
+/* Bâtiments en avant du sol, pour remplir le milieu.
+   L'image a la même forme que la scène, donc elle la couvre au complet comme le sol */
+#couche-filler {
+  background-image: url(./images/planet2/filler2-leger.png);
+  /* 10% plus grand que la scène : la couche dépasse de 96px à gauche et à droite.
+     En haut et en bas elle dépasserait de 54px, mais on la descend de 160px :
+     elle commence donc 106px sous le haut de la scène (-54 + 160) et finit 214px sous le bas (54 + 160).
+     Si on change ces chiffres, changer aussi le 106px du transform-origin plus bas */
+  inset: 106px -96px -214px;
+}
+
+/* Bâtisses derrière le sol.
+   C'est une couche à part pour pouvoir rester nette plus longtemps que le sol */
+#couche-batisse {
+  background-image: url(./images/batiments2/batiments-complet2-leger.png);
+  /* La couche fait toute la scène, comme le sol, et c'est l'image qu'on place dedans.
+     Comme ça la bâtisse grossit exactement comme le sol et reste alignée avec lui.
+     Pour la déplacer ou la grossir, changer seulement ces deux lignes */
+  background-size: 70% 70%;
+  background-position: 192px -3px; /* gauche, haut */
+}
+
+/* Tout est accroché au même point : l'horizon du sol = le haut de la planète */
+:root {
+  --horizon: 50%; /* hauteur du sol à partir du haut, modifiée par le js */
+  /* de combien on descend la planète pour que son sommet reste
+     au milieu de ville.png, calculé par le js */
+  --decalage: 0px;
+}
+
+/* la bâtisse et le filler grossissent à partir du même point que le sol pour rester collés dessus */
+#couche-sol,
+#couche-filler,
+#couche-batisse {
+  transform-origin: center var(--horizon);
+}
+
+/* le filler commence 106px plus bas que la scène, alors son horizon est 106px plus haut dans la couche */
+#couche-filler {
+  transform-origin: center calc(var(--horizon) - 106px);
+}
+
+#couche-planete,
+#couche-orbite {
+  /* la couche des nuages et des satellites est une copie invisible de la planète :
+     même place, même taille, même point de départ, donc elle reste collée dessus */
+  /* le haut de la planète arrive au milieu de l'image du sol */
+  inset: calc(var(--horizon) + var(--decalage)) auto auto calc(50% - 150px);
+  /* grossit à partir de l'horizon, le même point que le sol */
+  transform-origin: center calc(0px - var(--decalage));
+}
+/* Le ciel (400px) est un halo autour de la planète (300px) :
+   il dépasse de 50px de chaque côté, soit (400 - 300) / 2 */
+#couche-ciel {
+  /* inset = haut, droite, bas, gauche
+     haut   : 50px plus haut que l'horizon, pour dépasser au-dessus de la planète
+     gauche : centré, on recule de la moitié de la largeur (400 / 2 = 200px)
+     calc() fait le calcul, var() lit seulement la variable */
+  inset: calc(var(--horizon) - 50px + var(--decalage)) auto auto calc(50% - 200px);
+  /* grossit à partir de l'horizon (centré, à 50px du haut du ciel moins le décalage),
+     le même point que la planète, sinon les deux se décalent pendant le zoom */
+  transform-origin: center calc(50px - var(--decalage));
+}
+
+.cursor-circle {
+  z-index: 5;
+}
+
+/* Échelle d'altitude */
+#echelle {
+  position: fixed;
+  top: 16px;
+  bottom: 16px;
+  left: 30px;
+  width: 10px;
+  z-index: 30;
+  background: rgba(0, 0, 0, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+}
+
+/* la barre verticale */
+#echelle-barre {
+  position: absolute;
+  top: 16px;
+  bottom: 16px;
+  left: 0px;
+  width: 2px;
+}
+
+/* le point qui monte */
+#echelle-curseur {
+  position: absolute;
+  left: 24px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+
+  background: #f7c600;
+  box-shadow:
+    0 0 0 3px rgba(247, 198, 0, 0.18),
+    0 0 12px rgba(247, 198, 0, 0.35);
+
+  transform: translate(-50%, 50%);
+  transition: bottom 0.2s ease;
+}
+
+/* le texte de l'altitude */
+#echelle-altitude {
+  position: absolute;
+  left: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+
+  display: inline-block;
+  padding: 4px 10px;
+
+  background: rgba(0, 0, 0, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+
+  color: #fff;
+  font-family: "Bebas Neue", Arial, sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+}
+
+/* debug caché */
+#zoom-info {
+  display: none;
+}
+
+
+
+
+/* Message affiché à 10 000 km */
+
+.fin-experience {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(3px);
+
+  opacity: 0;
+  visibility: hidden;
+
+  transition:
+    opacity 1s ease,
+    visibility 1s;
+}
+
+
+/* Classe ajoutée par le JS à zoom 10 */
+
+.fin-experience.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.fin-experience p {
+  margin: 0;
+
+  color: white;
+  font-size: 100px;
+  letter-spacing: 2px;
+
+  text-align: center;
+}
+
+/* Template d'animation 3 images (c'est scripts/animation.js qui change l'image).
+   Chaque animation donne sa place et sa taille avec son id, ex. :
+   #nuage { top: 100px; left: 200px; width: 300px; height: 200px; } */
+.animation {
+  position: absolute;
+  background-size: contain; /* l'image au complet, sans la déformer */
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+/* La couche des nuages et des satellites : même boîte que la planète (300 x 300), mais vide.
+   Les mesures de ses animations sont donc en pixels de la planète :
+   left 150 = le milieu de la planète, top 0 = son sommet, top négatif = au-dessus */
+#couche-orbite {
+  width: 300px;
+  height: 300px;
+}
+
+/* Les boîtes sont en 16:9 comme les images, et le dessin n'en remplit qu'une partie.
+   La ville est posée sur le sommet de la planète : environ 70px de large, centrée à left 150 */
+
+/* deux nuages : le plus bas des deux tombe pile sur la ville */
+#nuages-1 {
+  left: 85px;
+  top: -80px;
+  width: 260px;
+  height: 146px;
+}
+/* les mêmes nuages, plus petits et retournés (scaleX(-1) = effet miroir) pour couvrir le côté gauche */
+#nuages-2 {
+  left: -25px;
+  top: -54px;
+  width: 200px;
+  height: 112px;
+  transform: scaleX(-1);
+}

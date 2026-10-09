@@ -171,6 +171,9 @@ body {
 }
 
 /* Apparition au scroll */
+#synopsis p{
+    margin-bottom: 30px;
+}
 
 .reveal {
     opacity: 0;
@@ -234,7 +237,7 @@ body {
 
 .titre-anim {
     display: inline-block;
-    animation: titreAnim 2s ease-in-out infinite;
+    animation: titreAnim 8s ease-in-out infinite;
 }
 
 @keyframes titreAnim {

@@ -204,9 +204,9 @@ function mettreAJour() {
       // attend les 500 ms du fondu déjà utilisé par transition.js
       setTimeout(() => {
         window.location.href = "retour.html";
-      }, 500);
+      }, 700);
 
-    }, 2000);
+    }, 5000);
   }
   info.textContent = "Zoom : " + zoom;
   altitude.textContent = calculerAltitude();
