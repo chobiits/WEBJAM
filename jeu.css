@@ -132,11 +132,10 @@ body {
   position: fixed;
   top: 16px;
   bottom: 16px;
-  left: 16px;
-  width: 72px;
+  left: 30px;
+  width: 10px;
   z-index: 30;
-
-  background: rgba(20, 20, 20, 0.55);
+  background: rgba(0, 0, 0, 0.72);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 18px;
   backdrop-filter: blur(8px);
@@ -148,15 +147,8 @@ body {
   position: absolute;
   top: 16px;
   bottom: 16px;
-  left: 24px;
+  left: 0px;
   width: 2px;
-
-  background: linear-gradient(
-    to top,
-    rgba(255, 255, 255, 0.15),
-    rgba(255, 255, 255, 0.95)
-  );
-  border-radius: 999px;
 }
 
 /* le point qui monte */
@@ -190,9 +182,9 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 999px;
 
-  color: #f7c600;
+  color: #fff;
   font-family: "Bebas Neue", Arial, sans-serif;
-  font-size: 12px;
+  font-size: 18px;
   font-weight: 700;
   line-height: 1;
   white-space: nowrap;
@@ -204,6 +196,8 @@ body {
 #zoom-info {
   display: none;
 }
+
+
 
 
 /* Message affiché à 10 000 km */
@@ -338,3 +332,25 @@ body {
   background-size: contain;
   background-repeat: no-repeat;
 }
+
+/* animation avion */
+#avion {
+  animation: avion-voler 5s step-end infinite;
+}
+@keyframes avion-voler {
+  0% {
+    transform: translateX(0) translateY(0);
+  }
+  25% {
+    transform: translateX(5px) translateY(-2.5px);
+  }
+  50% {
+    transform: translateX(10px) translateY(-5px);
+  }
+  75% {
+    transform: translateX(5px) translateY(-2.5px);
+  }
+  100% {
+    transform: translateX(0) translateY(0);
+  }
+}     
