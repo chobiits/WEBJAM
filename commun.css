@@ -6,6 +6,14 @@
     src: url("./fonts/BebasNeue-Regular.ttf");
 }
 
+/* Les couleurs de base du site */
+:root {
+    --porcelaine: #FDFFFC;
+    --rose: #FFC2CE;
+    --onyx: #161316;
+    --or: #FFB433;
+}
+
 /* Fondu entre les pages */
 
 /* chaque page apparaît en fondu quand elle se charge */
@@ -33,7 +41,7 @@ body.fondu-sortie {
 /* Étoiles */
 
 .etoiles {
-    background-color: #000;
+    background-color: var(--onyx);
 
     background-image:
         radial-gradient(circle at 10% 20%, white 1px, transparent 1.5px),
@@ -57,11 +65,6 @@ body.fondu-sortie {
 
     background-repeat: repeat;
 
-    /* Animation de déplacement du fond.
-    derive = nom de l'animation
-    40s = durée d'un cycle complet
-    linear = vitesse constante
-    infinite = recommence à l'infini */
     animation: derive 40s linear infinite;
 }
 
@@ -121,7 +124,7 @@ Ils sont placés par desus le fond étoilé principal*/
     position: fixed;
     width: 40px;
     height: 40px;
-    border: 2px solid #ffb443;
+    border: 2px solid var(--or);
     border-radius: 50%;
     pointer-events: none;
     transform: translate(-50%, -50%);
@@ -168,7 +171,6 @@ Ils sont placés par desus le fond étoilé principal*/
 }
 
 @keyframes derive {
-    /* position initiale de toutes les couches de background-image */
     from {
         background-position: 0 0, 0 0, 0 0, 0 0, 0 0, 0 0, 0 0, 0 0;
     }

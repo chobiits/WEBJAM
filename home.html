@@ -93,11 +93,8 @@
 
     <!-- pour les éléments à faire apparaître au scroll -->
     <script>
-        // Récupère tous les éléments HTML qui possèdent la classe "reveal"
         const elements = document.querySelectorAll(".reveal");
-        // Crée un observateur qui va vérifier si les éléments entrent dans la zone visible de l'écran
         const observer = new IntersectionObserver((entries) => {
-            // "entries" contient tous les éléments observés dont l'état de visibilité vient de changer
             entries.forEach((entry) => {
 
                 if (entry.isIntersecting) {
@@ -106,7 +103,6 @@
 
             });
         }, {
-            // L'animation se déclenche quand 20 % de l'élément est visible dans l'écran
             threshold: 0.2
         });
 
@@ -120,16 +116,13 @@
     <div class="cursor-circle"></div>
 
     <script>
-        // Récupère le cercle créé juste au-dessus
         const cursorCircle = document.querySelector(".cursor-circle");
 
-        // Position de la souris    
         let mouseX = 0;
         let mouseY = 0;
 
         let circleX = 0;
         let circleY = 0;
-        // "écoute" les déplacements de la souris
         document.addEventListener("mousemove", (event) => {
             mouseX = event.clientX;
             mouseY = event.clientY;
@@ -145,7 +138,6 @@
 
             requestAnimationFrame(animateCursor);
         }
-        // Demande de relancer cette fonction à la prochaine image affichée
         animateCursor();
     </script>
 

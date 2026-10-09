@@ -1,10 +1,5 @@
-
-
-const conteneurNotifications = document.getElementById("notifications"); // le conteneur du HTML
+const conteneurNotifications = document.getElementById("notifications");
 const animationsReduites = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-
-
 
 const notifications = [
    {
@@ -208,13 +203,11 @@ const NOTIFS_PAR_GROUPE = 4; // combien de notifications sortent en même temps
 const DELAI_DANS_GROUPE = 0.15; // en secondes, le petit retard entre deux notifications du même groupe
 
 // Donne à chaque notification le zoom où elle sort et son retard dans son groupe
-// ex. avec 39 notifications : 10 groupes (le dernier en a juste 3),
-// donc (9 - 3) / 9 = un groupe à tous les 0.67 de zoom environ
 const nombreGroupes = Math.ceil(notifications.length / NOTIFS_PAR_GROUPE);
 const ecartGroupes = (ZOOM_NOTIF_FIN - ZOOM_NOTIF_DEBUT) / (nombreGroupes - 1);
 for (let i = 0; i < notifications.length; i++) {
-  const groupe = Math.floor(i / NOTIFS_PAR_GROUPE); // 0 pour les 4 premières, 1 pour les 4 suivantes...
-  const placeDansGroupe = i % NOTIFS_PAR_GROUPE; // 0, 1, 2 ou 3
+  const groupe = Math.floor(i / NOTIFS_PAR_GROUPE);
+  const placeDansGroupe = i % NOTIFS_PAR_GROUPE;
 
   notifications[i].zoom = ZOOM_NOTIF_DEBUT + ecartGroupes * groupe;
   notifications[i].delai = DELAI_DANS_GROUPE * placeDansGroupe;
@@ -224,14 +217,14 @@ let zoomPrecedent = 0; // le zoom d'avant, pour détecter qu'on vient de franchi
 
 // Petit outil : crée un élément, lui donne une classe et un texte
 function fabriquer(balise, classe, texte) {
-  const el = document.createElement(balise);   // on crée l'élément (div, span...)
-  el.className = classe;                        // on lui donne sa classe CSS
-  if (texte) el.textContent = texte;            // si un texte est fourni, on l'écrit dedans
-  return el;                                    // on renvoie l'élément fabriqué
+  const el = document.createElement(balise);
+  el.className = classe;
+  if (texte) el.textContent = texte;
+  return el;
 }
 
 // Fabrique une notification et l'affiche
-function creerNotification(n) {                     // on reçoit tout l'objet n
+function creerNotification(n) {
   const notif = fabriquer("div", "notif");
   notif.style.setProperty("--dx", `${n.dx}px`);     // position décalée
   notif.style.setProperty("--dy", `${n.dy}px`);
@@ -254,18 +247,18 @@ function creerNotification(n) {                     // on reçoit tout l'objet n
     icone.style.backgroundRepeat = "no-repeat";
   }
 
-  if (n.photo) {                                    // si une photo est fournie
-    const img = new Image();                        // on la charge d'abord en coulisses
-    img.onload = () => {                            // si elle existe bien...
-      icone.textContent = "";                       // ...on enlève l'emoji
-      icone.style.backgroundImage = `url("${n.photo}")`; // ...et la photo devient le fond
+  if (n.photo) {
+    const img = new Image();
+    img.onload = () => {
+      icone.textContent = "";
+      icone.style.backgroundImage = `url("${n.photo}")`;
       icone.style.backgroundSize = "cover";
       icone.style.backgroundPosition = "center";
     };
-    img.src = n.photo;                              // si la photo est introuvable, l'emoji reste
+    img.src = n.photo;
   }
 
-  const entete = fabriquer("div", "notif-entete");  // ligne : nom de l'app + heure
+  const entete = fabriquer("div", "notif-entete");
   entete.append(fabriquer("span", "notif-app", n.app), fabriquer("span", "", n.heure));
 
   const contenu = fabriquer("div", "notif-contenu");
@@ -273,23 +266,23 @@ function creerNotification(n) {                     // on reçoit tout l'objet n
 
   notif.append(icone, contenu);
 
-  if (n.appel) {                                    // seulement pour la notif d'appel
+  if (n.appel) {
     const boutons = fabriquer("div", "notif-boutons");
     boutons.append(
       fabriquer("div", "bouton refuser", "Refuser"),
       fabriquer("div", "bouton accepter", "Accepter")
     );
-    notif.append(boutons);                          // dans la notif, sous l'icône et le texte
+    notif.append(boutons);
   }
 
-  notif.addEventListener("click", () => {           // un clic ferme la notif
+  notif.addEventListener("click", () => {
     if (animationsReduites) {                       // sans animation, "animationend" n'arriverait jamais
       notif.remove();
       return;
     }
     notif.classList.add("sortie");
     notif.addEventListener("animationend", (e) => {
-      if (e.animationName === "notif-sortie") notif.remove(); // on supprime à la fin de l'animation de sortie
+      if (e.animationName === "notif-sortie") notif.remove();
     });
   });
 
@@ -308,7 +301,7 @@ function verifierNotifications(zoom) {
       creerNotification(n);
     }
   }
-  zoomPrecedent = zoom; // on mémorise pour la prochaine fois
+  zoomPrecedent = zoom;
 }
 
 // vrai s'il reste au moins une notification à l'écran (main.js s'en sert pour bloquer le dézoom)
