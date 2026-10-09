@@ -23,7 +23,7 @@ const PAS_ZOOM = 0.1; // ce qu'on enlève au zoom à chaque coup de molette
 // La descente arrête un peu avant le sol (zoom 0), sinon le papillon est trop gros à l'écran
 // ex. à 0.5 le sol est grossi 5 fois au lieu de 6.5
 const ZOOM_FIN = 1.5;
-const PAUSE_FIN = 6000; // en ms, le temps qu'on reste au sol avant le fondu au noir
+const PAUSE_FIN = 3000; // en ms, le temps qu'on reste au sol avant le fondu au noir
 const DUREE_FONDU_FIN = 3000; // en ms, la même durée que l'animation fondu-sortie de commun.css
 const PAGE_ACCUEIL = "home.html";
 const PENTE_ALTITUDE = 0.7; // plus c'est gros, plus l'altitude monte vite
