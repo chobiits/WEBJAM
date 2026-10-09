@@ -60,12 +60,15 @@ body {
   background-image: url(./images/planet/ville-leger.png);
 }
 
-/* Bâtisses au milieu en bas du sol.
+/* Bâtisses derrière le sol.
    C'est une couche à part pour pouvoir rester nette plus longtemps que le sol */
 #couche-batisse {
-  background-image: url(./images/batiments/batiment-complet-leger.png);
-  background-size: 768px 432px; /* même forme que l'image (16:9) */
-  background-position: center bottom;
+  background-image: url(./images/batiments/batiment-complet.png);
+  /* La couche fait toute la scène, comme le sol, et c'est l'image qu'on place dedans.
+     Comme ça la bâtisse grossit exactement comme le sol et reste alignée avec lui.
+     Pour la déplacer ou la grossir, changer seulement ces deux lignes */
+  background-size: 70% 70%;
+  background-position: 192px 27px; /* gauche, haut */
 }
 
 /* Tout est accroché au même point : l'horizon du sol = le haut de la planète */
@@ -76,6 +79,7 @@ body {
   --decalage: 0px;
 }
 
+/* la bâtisse grossit à partir du même point que le sol pour rester collée dessus */
 #couche-sol,
 #couche-batisse {
   transform-origin: center var(--horizon);
