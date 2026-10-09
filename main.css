@@ -359,3 +359,34 @@ Ils sont placés par desus le fond étoilé principal*/
         animation: none;
     }
 }
+
+/* Footer */
+
+.site-footer {
+    position: relative;
+    z-index: 1;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    gap: 10px;
+
+    padding-top: 30px;
+    padding-bottom: 25px;
+
+    color: rgba(0, 0, 0, 0.65);
+
+    text-align: center;
+    font-size: 12px;
+}
+
+.site-footer p {
+    margin: 0;
+}
+
+.ia-logo {
+    width: 85px;
+    height: auto;
+    object-fit: contain;
+}
