@@ -168,7 +168,7 @@ const notifications = [
     heure: "maintenant", dx: -580, dy: 100
   },
   {
-    app: "Jeux", icone: "🎮", couleur: "#5856d6", titre: "Vies rechargées !",
+    app: "Jeux", image: "./images/icones/gaming.png", couleur: "#5856d6", titre: "Vies rechargées !",
     texte: "Tes 5 vies sont de retour. Reviens jouer !",
     heure: "il y a 3 h", dx: -680, dy: 415
   },
