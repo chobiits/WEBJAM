@@ -5,6 +5,7 @@
 /* chaque page apparaît en fondu quand elle se charge */
 body {
     animation: fondu-entree 0.5s ease both;
+    overflow-x: hidden; /* pour éviter un scroll horizontal quand le zoom est trop grand */
 }
 
 /* classe ajoutée par scripts/transition.js juste avant de changer de page */
@@ -107,6 +108,45 @@ Ils sont placés par desus le fond étoilé principal*/
     animation: scintille 5s ease-in-out infinite alternate;
     animation-delay: -2s;
 }
+/* Cercle autour du curseur */
+
+.cursor-circle {
+    position: fixed;
+    width: 40px;
+    height: 40px;
+    border: 2px solid #ffb443;
+    border-radius: 50%;
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    z-index: 9999;
+}
+
+/* Overlay video */
+.overlay {
+  position: absolute;
+
+  top: 0;
+
+  left: 0;
+
+  width: 100%;
+
+  height: 100%;
+
+  z-index: 5; /* par-dessus #scene dans le jeu, sinon la scène la cache */
+
+  display: flex;
+
+  justify-content: center;
+
+  align-items: center;
+
+  mix-blend-mode: screen;
+
+  pointer-events: none;
+
+  opacity: 0.18;
+}
 
 @keyframes scintille {
     from { opacity: 0.1; }
@@ -145,3 +185,5 @@ Ils sont placés par desus le fond étoilé principal*/
         animation: none;
     }
 }
+
+

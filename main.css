@@ -183,19 +183,6 @@ body {
     transition-delay: 0.4s;
 }
 
-/* Cercle autour du curseur */
-
-.cursor-circle {
-    position: fixed;
-    width: 40px;
-    height: 40px;
-    border: 2px solid #ffb443;
-    border-radius: 50%;
-    pointer-events: none;
-    transform: translate(-50%, -50%);
-    z-index: 9999;
-}
-
 /* Partie claire après le menu */
 
 .contenu-clair {
@@ -283,26 +270,3 @@ body {
     object-fit: contain;
 }
 
-.overlay {
-  position: absolute;
-
-  top: 0;
-
-  left: 0;
-
-  width: 100%;
-
-  height: 100%;
-
-  display: flex;
-
-  justify-content: center;
-
-  align-items: center;
-
-  mix-blend-mode: screen;
-
-  pointer-events: none;
-
-  opacity: 0.15;
-}

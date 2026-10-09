@@ -3,15 +3,17 @@
 <head>
 <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- defer : le script attend que la page soit chargée -->
     <script src="./scripts/main.js" defer></script>
     <script src="./scripts/transition.js" defer></script>
     <link rel="stylesheet" href="./jeu.css" />
-    <!-- étoiles et fondu entre les pages, partagés avec l'accueil (après jeu.css pour passer par-dessus .couche) -->
     <link rel="stylesheet" href="./commun.css" />
     <title>Recentrer</title>
 </head>
 <body>
+    <!-- overlay video decoratif -->
+    <div class="overlay">
+        <video src="./images/overlay.mp4" autoplay muted loop></video>
+    </div>
     <!-- niveau de zoom, pour déboguer (caché dans le css) -->
     <p id="zoom-info">Zoom : 0</p>
 
@@ -38,4 +40,37 @@
       <div id="couche-sol" class="couche"></div>
     </div>
   </body>
+  
+<!-- pour le cercle autour du curseur -->
+<div class="cursor-circle"></div>
+
+<script>
+    // Récupère le cercle créé juste au-dessus
+    const cursorCircle = document.querySelector(".cursor-circle");
+
+    // Position de la souris    
+    let mouseX = 0;
+    let mouseY = 0;
+
+    let circleX = 0;
+    let circleY = 0;
+    // "écoute" les déplacements de la souris
+    document.addEventListener("mousemove", (event) => {
+        mouseX = event.clientX;
+        mouseY = event.clientY;
+    });
+
+    function animateCursor() {
+        // mouvement fluide avec un léger retard
+        circleX += (mouseX - circleX) * 0.12;
+        circleY += (mouseY - circleY) * 0.12;
+
+        cursorCircle.style.left = circleX + "px";
+        cursorCircle.style.top = circleY + "px";
+        
+        requestAnimationFrame(animateCursor);
+    }
+    // Demande de relancer cette fonction à la prochaine image affichée
+    animateCursor();
+</script>
 </html>
