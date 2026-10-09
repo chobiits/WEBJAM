@@ -4,6 +4,7 @@ console.log("retour.js est bien charge");
 const curseur = document.getElementById("echelle-curseur");
 const altitude = document.getElementById("echelle-altitude");
 const scene = document.getElementById("scene");
+const finExperience = document.getElementById("fin-experience");
 
 let redirectionLancee = false;
 
@@ -20,7 +21,7 @@ const ZOOM_MAX = 10;
 const PAS_ZOOM = 0.1; // ce qu'on enlève au zoom à chaque coup de molette
 // La descente arrête un peu avant le sol (zoom 0), sinon le papillon est trop gros à l'écran
 const ZOOM_FIN = 1.5;
-const PAUSE_FIN = 3000; // en ms, le temps qu'on reste au sol avant le fondu au noir
+const PAUSE_FIN = 8000; // en ms, le temps qu'on reste au sol (avec le message de fin) avant le fondu au noir
 const DUREE_FONDU_FIN = 3000; // en ms, la même durée que l'animation fondu-sortie de commun.css
 const PAGE_ACCUEIL = "index.html";
 const PENTE_ALTITUDE = 0.7; // plus c'est gros, plus l'altitude monte vite
@@ -160,6 +161,7 @@ function mettreAJour() {
   // puis fondu au noir et retour à l'accueil
   if (zoom <= ZOOM_FIN && redirectionLancee === false) {
     redirectionLancee = true;
+    finExperience.classList.add("visible");
 
     setTimeout(() => {
       document.body.classList.add("fondu-sortie");
