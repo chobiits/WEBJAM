@@ -7,6 +7,8 @@ const altitude = document.getElementById("echelle-altitude");
 const scene = document.getElementById("scene");
 const finExperience = document.getElementById("fin-experience");
 
+let redirectionLancee = false;
+
 // Réglages
 const LARGEUR_IMAGE = 1920;
 const HAUTEUR_IMAGE = 1080;
@@ -206,6 +208,26 @@ function mettreAJourHorizon() {
 // À appeler chaque fois que le zoom change
 function mettreAJour() {
   mettreAJourHorizon(); // avant les couches, elles se placent par rapport à l'horizon
+  // Quand on arrive à 10 000 km
+  if (zoom >= ZOOM_MAX && redirectionLancee === false) {
+
+    redirectionLancee = true;
+
+    // Affiche "Retrouvez l'équilibre."
+    finExperience.classList.add("visible");
+
+    // Attend 2 secondes avant de commencer le fondu
+    setTimeout(() => {
+
+      document.body.classList.add("fondu-sortie");
+
+      // attend les 500 ms du fondu déjà utilisé par transition.js
+      setTimeout(() => {
+        window.location.href = "retour.html";
+      }, 500);
+
+    }, 2000);
+  }
   info.textContent = "Zoom : " + zoom;
   altitude.textContent = calculerAltitude();
   curseur.style.bottom = (zoom / ZOOM_MAX) * 100 + "%"; // 0% en bas, 100% en haut
