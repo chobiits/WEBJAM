@@ -39,6 +39,7 @@ let zoom = 0; // 0 = au sol, 10 = on voit la planète au complet
 // flouDebut  = zoom où le flou commence à changer
 // flouComplet = zoom où le flou a fini de changer
 // flouFin    = son flou à partir du zoom flouComplet
+// flouSortie = le flou ajouté pendant que la couche s'efface (0 = rien de plus)
 const couches = [
   // La ville a trois profondeurs : la bâtisse (loin), le sol (milieu), le filler (proche).
   // Plus une couche est proche, plus elle est grosse au début (depart) et plus elle rapetisse vite,
@@ -46,26 +47,27 @@ const couches = [
   // Elles rapetissent juste un peu plus vite que la planète :
   // par zoom, planète x0.63, bâtisse x0.58, sol x0.57, filler x0.54
   // le sol devient flou juste avant les premières notifications (zoom 3, dans notifications.js)
-  { id: "couche-sol", niveau: 3.3, depart: 6.5, debut: 0, fin: 7, fondu: 1.5, fixe: false, flouDepart: 0, flouDebut: 2.5, flouComplet: 3, flouFin: 4 },
+  { id: "couche-sol", niveau: 3.3, depart: 6.5, debut: 0, fin: 7, fondu: 1.5, fixe: false, flouDepart: 0, flouDebut: 2.5, flouComplet: 3, flouFin: 2, flouSortie: 0 },
   // depart 100 = entre 20 (le sol rapetisse beaucoup plus vite que la planète)
   // et 1024 (la planète rapetisse aussi vite que le sol)
   // un peu floue au début parce qu'elle est très grossie, nette à la fin
-  { id: "couche-planete", niveau: 10, depart: 100, debut: 0, fin: 11, fondu: 1, fixe: false, flouDepart: 6, flouDebut: 0, flouComplet: 10, flouFin: 0 },
+  { id: "couche-planete", niveau: 10, depart: 100, debut: 0, fin: 11, fondu: 1, fixe: false, flouDepart: 6, flouDebut: 0, flouComplet: 10, flouFin: 0, flouSortie: 0 },
   // le ciel disparaît avant la planète sinon on voit du ciel derrière la planète
   // il s'efface du zoom 4 au zoom 8
   // même niveau et même depart que la planète, sinon les deux se décalent
   // pas de flou ici, le ciel a déjà le sien dans jeu.css
-  { id: "couche-ciel", niveau: 10, depart: 100, debut: 0, fin: 8, fondu: 4, fixe: false, flouDepart: 0, flouDebut: 0, flouComplet: 10, flouFin: 0 },
+  { id: "couche-ciel", niveau: 10, depart: 100, debut: 0, fin: 8, fondu: 4, fixe: false, flouDepart: 0, flouDebut: 0, flouComplet: 10, flouFin: 0, flouSortie: 0 },
   // les étoiles sont trop loin pour changer de taille
   // debut 3.5 : avant, le ciel les cache au complet, pas besoin de les animer pour rien
-  { id: "couche-etoiles", niveau: 10, depart: 1, debut: 3.5, fin: 11, fondu: 1, fixe: true, flouDepart: 0, flouDebut: 0, flouComplet: 10, flouFin: 0 },
+  { id: "couche-etoiles", niveau: 10, depart: 1, debut: 3.5, fin: 11, fondu: 1, fixe: true, flouDepart: 0, flouDebut: 0, flouComplet: 10, flouFin: 0, flouSortie: 0 },
   // la plus loin de la ville, donc la plus petite au début et la plus lente
   // depart 5 : la fleur fait 39px de large, x5 = environ 1/10 de la largeur de l'écran (192px)
-  // elle devient floue en même temps que le sol, mais deux fois plus (flouFin 8 au lieu de 4),
+  // elle devient à peine floue en même temps que le sol (flouFin 1),
+  // puis très floue juste avant de disparaître (flouSortie 8 : de 1px au zoom 6 à 9px au zoom 7),
   // et elle finit de disparaître en même temps que lui (zoom 7)
-  { id: "couche-batisse", niveau: 3, depart: 5, debut: 0, fin: 7, fondu: 1, fixe: false, flouDepart: 0, flouDebut: 2.5, flouComplet: 3, flouFin: 8 },
+  { id: "couche-batisse", niveau: 3, depart: 5, debut: 0, fin: 7, fondu: 1, fixe: false, flouDepart: 0, flouDebut: 2.5, flouComplet: 3, flouFin: 1, flouSortie: 8 },
   // les bâtiments en avant du sol : les plus proches, donc les plus gros au début et les plus rapides
-  { id: "couche-filler", niveau: 3.6, depart: 9, debut: 0, fin: 7, fondu: 1.5, fixe: false, flouDepart: 0, flouDebut: 2.5, flouComplet: 3, flouFin: 4 },
+  { id: "couche-filler", niveau: 3.6, depart: 9, debut: 0, fin: 7, fondu: 1.5, fixe: false, flouDepart: 0, flouDebut: 2.5, flouComplet: 3, flouFin: 2, flouSortie: 0 },
 ];
 
 // 1 m au zoom 0, 10 000 km au zoom 10
@@ -101,8 +103,10 @@ function calculerOpacite(couche) {
 }
 
 // Le flou passe de flouDepart (au zoom flouDebut) à flouFin (au zoom flouComplet)
-// ex. la bâtisse (flouDebut 2.5, flouComplet 3, flouFin 8) au zoom 2.8 :
-// (2.8 - 2.5) / (3 - 2.5) = 0.6, donc 8 * 0.6 = 4.8px
+// ex. la bâtisse (flouDebut 2.5, flouComplet 3, flouFin 1) au zoom 2.8 :
+// (2.8 - 2.5) / (3 - 2.5) = 0.6, donc 1 * 0.6 = 0.6px
+// Ensuite, pendant que la couche s'efface, on ajoute flouSortie petit à petit
+// ex. la bâtisse (flouSortie 8) à moitié effacée : 1 + 8 * 0.5 = 5px
 function calculerFlou(couche) {
   // de 0 (au zoom flouDebut) à 1 (au zoom flouComplet)
   let progression = (zoom - couche.flouDebut) / (couche.flouComplet - couche.flouDebut);
@@ -113,7 +117,12 @@ function calculerFlou(couche) {
     progression = 1;
   }
 
-  return couche.flouDepart + (couche.flouFin - couche.flouDepart) * progression;
+  const flou = couche.flouDepart + (couche.flouFin - couche.flouDepart) * progression;
+
+  // de 0 (pas encore en train de s'effacer) à 1 (complètement effacée)
+  const sortie = 1 - calculerOpacite(couche);
+
+  return flou + couche.flouSortie * sortie;
 }
 
 // Met l'image de chaque couche si le fichier existe, sinon la couleur du css reste
