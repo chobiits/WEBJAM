@@ -1,7 +1,9 @@
 console.log("son.js est bien chargé");
 
 
-/* Création des sons */
+/* =========================================
+   CRÉATION DES SONS
+   ========================================= */
 
 const musiqueFond = new Audio("./sons/musique_fond.mp3");
 const sonVille = new Audio("./sons/son_ville.mp3");
@@ -9,8 +11,15 @@ const sonFeu = new Audio("./sons/feu.mp3");
 const sonEspace = new Audio("./sons/son_espace.mp3");
 const sonDezoom = new Audio("./sons/son_vent_dezoom.mp3");
 
+const sonNotification = new Audio("./sons/notification.mp3");
+const sonAppel = new Audio("./sons/appel.mp3");
 
-// Tous ces sons doivent pouvoir tourner en boucle
+
+/* =========================================
+   RÉGLAGES DES SONS
+   ========================================= */
+
+// Les ambiances tournent en boucle
 musiqueFond.loop = true;
 sonVille.loop = true;
 sonFeu.loop = true;
@@ -18,7 +27,12 @@ sonEspace.loop = true;
 sonDezoom.loop = true;
 
 
-// Tous les volumes commencent à 0
+// Les notifications sont des sons ponctuels
+sonNotification.loop = false;
+sonAppel.loop = false;
+
+
+// Tous les sons d'ambiance commencent silencieux
 musiqueFond.volume = 0;
 sonVille.volume = 0;
 sonFeu.volume = 0;
@@ -26,20 +40,25 @@ sonEspace.volume = 0;
 sonDezoom.volume = 0;
 
 
+// Sert à savoir si le navigateur a autorisé l'audio
 let audioLance = false;
 
 
-/* Démarrage de l'audio */
+/* =========================================
+   DÉMARRAGE DE L'AUDIO
+   ========================================= */
 
 function lancerAudio() {
 
-    // évite de lancer les sons plusieurs fois
+    // évite de relancer les sons plusieurs fois
     if (audioLance) {
         return;
     }
 
     audioLance = true;
 
+    // Lance les sons en boucle.
+    // Ils sont à volume 0 au départ.
     musiqueFond.play().catch(() => {});
     sonVille.play().catch(() => {});
     sonFeu.play().catch(() => {});
@@ -51,14 +70,20 @@ function lancerAudio() {
 
 
 // Les navigateurs demandent généralement
-// une interaction avant d'autoriser du son
+// une interaction avant d'autoriser le son
 window.addEventListener("pointerdown", lancerAudio, { once: true });
 window.addEventListener("keydown", lancerAudio, { once: true });
 window.addEventListener("wheel", lancerAudio, { once: true });
 
 
-/* Fonction pour calculer une progression entre deux niveaux de zoom */
+/* ^progression */
 
+// Retourne une valeur entre 0 et 1
+// exemple :
+// progression(3, 5)
+// zoom 3 = 0
+// zoom 4 = 0.5
+// zoom 5 = 1
 function progression(debut, fin) {
 
     let valeur = (zoom - debut) / (fin - debut);
@@ -75,40 +100,41 @@ function progression(debut, fin) {
 }
 
 
-/* Fonction pour changer doucement un volume */
+/* changement progressif du volume */
 
 function volumeDoux(audio, volumeCible) {
 
-    // rapproche progressivement le volume actuel
+    // Le volume se rapproche progressivement
     // du volume demandé
     audio.volume += (volumeCible - audio.volume) * 0.10;
 
-    // évite les très petites valeurs inutiles
+    // évite de garder des valeurs minuscules
     if (audio.volume < 0.001) {
         audio.volume = 0;
     }
 }
 
 
-/* Détection du mouvement de dézoom */
+/* détection du dézoom */
 
 let zoomPrecedentSon = 0;
 let dernierMouvement = 0;
 
 
-/*Boucle principale du son */
+/* boucle principale */
 
 function mettreAJourSons() {
 
     if (audioLance) {
 
-        /* Musique de fond */
+
+        /* musique fond */
 
         volumeDoux(musiqueFond, 0.10);
 
 
 
-        /* Ambiance de ville, entre 3 et 5 disparaît progressivement */
+        /* ville */
 
         let volumeVille = 0;
 
@@ -127,18 +153,16 @@ function mettreAJourSons() {
 
 
 
-        /* Feu */
+        /* feu*/
 
         let volumeFeu = 0;
 
         if (zoom <= 1.2) {
 
-            // proche du feu : il est bien audible
             volumeFeu = 0.40;
 
         } else if (zoom < 3) {
 
-            // entre 1.2 et 3, le feu disparaît progressivement
             const p = progression(1.2, 3);
 
             volumeFeu = 0.40 * (1 - p);
@@ -148,7 +172,7 @@ function mettreAJourSons() {
 
 
 
-        /* Espace */
+        /* espace */
 
         let volumeEspace = 0;
 
@@ -167,8 +191,10 @@ function mettreAJourSons() {
 
 
 
-        /* Son de dézoom */
+        /* son du dézoom */
 
+        // Si le zoom vient réellement d'augmenter,
+        // on mémorise le moment du mouvement
         if (zoom > zoomPrecedentSon) {
 
             dernierMouvement = performance.now();
@@ -177,10 +203,10 @@ function mettreAJourSons() {
         }
 
 
-        // Si le zoom a changé il y a moins de 250 ms,
-        // le son de mouvement est audible.
         let volumeDezoom = 0;
 
+        // Le souffle reste audible pendant 250 ms
+        // après le dernier changement de zoom
         if (performance.now() - dernierMouvement < 250) {
             volumeDezoom = 0.20;
         }
@@ -188,15 +214,82 @@ function mettreAJourSons() {
         volumeDoux(sonDezoom, volumeDezoom);
 
 
-        // mémorise le zoom actuel pour la prochaine frame
+        // mémorise le zoom pour la prochaine image
         zoomPrecedentSon = zoom;
     }
 
 
-    // recommence à la prochaine image
+    // Relance cette fonction à la prochaine image
     requestAnimationFrame(mettreAJourSons);
 }
 
 
-// Lance la boucle
+/* sons des notifications*/
+
+// Joue un son ponctuel.
+// On clone le fichier audio pour permettre à plusieurs notifications rapprochées de jouer sans se couper entre elles.
+function jouerEffet(audioOriginal, volume, dureeMax = 1500) {
+
+    const son = audioOriginal.cloneNode();
+
+    son.loop = false;
+    son.volume = volume;
+    son.currentTime = 0;
+
+    son.play().catch(() => {});
+
+
+    // Sécurité : on arrête le son après un certain temps
+    setTimeout(() => {
+
+        son.pause();
+        son.currentTime = 0;
+
+    }, dureeMax);
+}
+
+
+/* reception notif*/
+
+window.addEventListener("notification-affichee", (event) => {
+
+    const notification = event.detail;
+
+    // Attend le même délai que l'apparition
+    // visuelle de la notification
+    setTimeout(() => {
+
+        if (!audioLance) {
+            return;
+        }
+
+
+        // Si c'est un appel entrant
+        if (notification.appel) {
+
+            jouerEffet(
+                sonAppel,
+                0.30,
+                2000
+            );
+
+        }
+
+        // Sinon notification classique
+        else {
+
+            jouerEffet(
+                sonNotification,
+                0.20,
+                1000
+            );
+        }
+
+    }, notification.delai * 1000);
+
+});
+
+
+/* Lancement de la boucle principale */
+
 mettreAJourSons();

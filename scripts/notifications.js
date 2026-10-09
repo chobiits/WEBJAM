@@ -263,6 +263,11 @@ function creerNotification(n) {                     // on reçoit tout l'objet n
   });
 
   conteneurNotifications.appendChild(notif);
+
+  // Informe son.js qu'une notification vient d'être créée
+  window.dispatchEvent(new CustomEvent("notification-affichee", {
+    detail: n
+  }));
 }
 
 

@@ -146,6 +146,32 @@
         // Demande de relancer cette fonction à la prochaine image affichée
         animateCursor();
     </script>
+
+    <!-- Musique de fond de la page d'accueil -->
+    <audio id="musique-accueil" src="./sons/fond_accueil.mp3" loop preload="auto"></audio>
+
+    <script>
+        const musiqueAccueil = document.getElementById("musique-accueil");
+
+        // Volume assez faible pour rester en fond
+        musiqueAccueil.volume = 0.3;
+
+        let musiqueLancee = false;
+
+        function lancerMusiqueAccueil() {
+            if (musiqueLancee) {
+                return;
+            }
+
+            musiqueLancee = true;
+            musiqueAccueil.play().catch(() => {});
+        }
+
+        // Le navigateur demande une interaction avant d'autoriser le son
+        window.addEventListener("pointerdown", lancerMusiqueAccueil, { once: true });
+        window.addEventListener("keydown", lancerMusiqueAccueil, { once: true });
+        window.addEventListener("wheel", lancerMusiqueAccueil, { once: true });
+    </script>
 </body>
 
 </html>
