@@ -19,6 +19,9 @@ let zoom = 0;
 
 // Dézoom à la molette : vers le haut on monte, on ne peut pas redescendre
 window.addEventListener("wheel", (e) => {
+    if (notificationsAffichees()) {
+        return; // il faut fermer les notifications avant de continuer à monter
+    }
     if (e.deltaY > 0) {
         zoom = zoom + 0.1;
     }
@@ -26,6 +29,7 @@ window.addEventListener("wheel", (e) => {
     zoom = parseFloat(zoom.toFixed(1)); // évite les 0.30000000000000004
     console.log(`Zoom : ${zoom}`);
     mettreAJour();
+    verifierNotifications(zoom); // affiche les notifications dont on vient de franchir le seuil
 });
 
 // niveau = zoom où la couche est à sa taille normale
