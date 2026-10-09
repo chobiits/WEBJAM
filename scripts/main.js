@@ -13,23 +13,24 @@ const RAYON_PLANETE = 150; // la moitié des 300px du css
 const DOSSIER_IMAGES = "./images/"; // une image par couche, nommée comme son id (ex. couche-sol.png)
 const ZOOM_MAX = 10;
 const PAS_ZOOM = 0.1; // ce qu'on ajoute au zoom à chaque coup de molette
-const TAILLE_MAX = 20; // à 20 la couche dépasse déjà de l'écran
 const PENTE_ALTITUDE = 0.7; // plus c'est gros, plus l'altitude monte vite
 
 let zoom = 0; // 0 = au sol, 10 = on voit la planète au complet
 
 // Les couches de la scène
 // niveau = zoom où la couche est à sa taille normale
+// depart = sa taille au zoom 0
 // fin    = zoom où la couche a disparu
 // fondu  = sur combien de zoom elle s'efface avant fin
 // fixe   = true si elle ne change pas de taille
 const couches = [
-  { id: "couche-sol", niveau: 1, fin: 6, fondu: 1, fixe: false }, // niveau 1 = zoom x2 sur le sol au départ
-  { id: "couche-planete", niveau: 10, fin: 11, fondu: 1, fixe: false },
+  { id: "couche-sol", niveau: 1, depart: 2, fin: 6, fondu: 1, fixe: false }, // zoom x2 sur le sol au départ
+  { id: "couche-planete", niveau: 10, depart: 20, fin: 11, fondu: 1, fixe: false }, // à 20 elle dépasse déjà de l'écran
   // le ciel disparaît avant la planète sinon on voit du ciel derrière la planète
   // il s'efface du zoom 4 au zoom 8
-  { id: "couche-ciel", niveau: 10, fin: 8, fondu: 4, fixe: false },
-  { id: "couche-etoiles", niveau: 10, fin: 11, fondu: 1, fixe: true }, // les étoiles sont trop loin pour changer de taille
+  // même niveau et même depart que la planète, sinon les deux se décalent
+  { id: "couche-ciel", niveau: 10, depart: 20, fin: 8, fondu: 4, fixe: false },
+  { id: "couche-etoiles", niveau: 10, depart: 1, fin: 11, fondu: 1, fixe: true }, // les étoiles sont trop loin pour changer de taille
 ];
 
 // 1 m au zoom 0, 10 000 km au zoom 10
@@ -42,15 +43,11 @@ function calculerAltitude() {
   return Math.round(metres / 1000) + " km";
 }
 
-// La taille diminue de moitié à chaque 1 de zoom
-// ex. le sol (niveau 1) : zoom 0 = x2, zoom 1 = x1, zoom 2 = x0.5
+// La couche part de sa taille "depart" au zoom 0 et arrive à x1 à son niveau
+// ex. le sol (depart 2, niveau 1) : zoom 0 = x2, zoom 1 = x1, zoom 2 = x0.5
+// ex. la planète (depart 20, niveau 10) : zoom 0 = x20, zoom 5 = x4.5, zoom 10 = x1
 function calculerTaille(couche) {
-  let taille = Math.pow(2, couche.niveau - zoom);
-
-  if (taille > TAILLE_MAX) {
-    taille = TAILLE_MAX;
-  }
-  return taille;
+  return Math.pow(couche.depart, 1 - zoom / couche.niveau);
 }
 
 // 1 = visible, 0 = invisible
