@@ -35,7 +35,7 @@ body {
   background-color: black;
 } /* les étoiles viennent de la classe .etoiles (commun.css) */
 #couche-planete {
-  background-color: navy;
+  background-color: rgba(0, 0, 128, 0);
   width: 300px;
   height: 300px;
   border-radius: 50%;  
