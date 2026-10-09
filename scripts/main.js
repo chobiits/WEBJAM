@@ -44,7 +44,7 @@ const couches = [
   // c'est ça qui fait la parallaxe. Les trois arrivent presque à la même taille (x0.2) au zoom 6.
   // Elles rapetissent juste un peu plus vite que la planète :
   // par zoom, planète x0.63, bâtisse x0.58, sol x0.57, filler x0.54
-  // le sol devient flou juste avant les notifications (zoom 3, dans notifications.js)
+  // le sol devient flou juste avant les premières notifications (zoom 3, dans notifications.js)
   { id: "couche-sol", niveau: 3.3, depart: 6.5, debut: 0, fin: 7, fondu: 1.5, fixe: false, flouDepart: 0, flouDebut: 2.5, flouComplet: 3, flouFin: 4 },
   // depart 100 = entre 20 (le sol rapetisse beaucoup plus vite que la planète)
   // et 1024 (la planète rapetisse aussi vite que le sol)
@@ -237,7 +237,7 @@ function calculerPas() {
   const progression = (zoom - ZOOM_RAPIDE_DEBUT) / (ZOOM_RAPIDE_FIN - ZOOM_RAPIDE_DEBUT);
   const pas = PAS_ZOOM + (PAS_ZOOM_RAPIDE - PAS_ZOOM) * progression;
 
-  // on ne dépasse pas la fin de la zone, sinon on sauterait par-dessus les notifications du zoom 3
+  // on ne dépasse pas la fin de la zone, sinon on sauterait par-dessus la première notification, au zoom 3
   if (zoom + pas > ZOOM_RAPIDE_FIN) {
     return ZOOM_RAPIDE_FIN - zoom;
   }
