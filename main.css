@@ -79,6 +79,16 @@ body {
     letter-spacing: 18px;
 }
 
+.logo-title {
+    margin: 0;
+}
+
+.hero-logo {
+    display: block;
+    width: min(520px, 80vw);
+    height: auto;
+}
+
 .subtitle {
     margin: 0;
     color: #d1d1d1;
