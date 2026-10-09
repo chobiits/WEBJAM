@@ -8,11 +8,12 @@
   <script src="./scripts/transition.js" defer></script>
   <script src="./scripts/notifications.js" defer></script>
   <script src="./scripts/video.js" defer></script>
+  <script src="./scripts/animation.js" defer></script>
   <script src="./scripts/son.js"></script>
   <link rel="stylesheet" href="./jeu.css" />
   <link rel="stylesheet" href="./commun.css" />
   <link rel="stylesheet" href="./notifications.css">
-  <title>Recentrer</title>
+  <title>NATURE BRUT</title>
 </head>
 
 <body>
@@ -38,7 +39,12 @@
     <!-- bâtisses derrière le sol, centrées sur le milieu du haut du sol -->
     <div id="couche-batisse" class="couche"></div>
     <div id="couche-sol" class="couche"></div>
+    <!-- batiment pour blender, en avant du sol -->
+    <div id="couche-filler" class="couche"></div>
   </div>
+    <!-- exemple d'animation 3 images (le template est dans scripts/animation.js),
+         à placer avec son id dans jeu.css :
+    <div id="nuage" class="animation" data-dossier="./images/animation-nuage/"></div> -->
     <div id="notifications"></div>
     <!-- Écran de fin : apparaît quand on arrive à 10 000 km -->
     <div id="fin-experience" class="fin-experience">

@@ -60,6 +60,17 @@ body {
   background-image: url(./images/planet/ville-leger.png);
 }
 
+/* Bâtiments en avant du sol, pour remplir le milieu.
+   L'image a la même forme que la scène, donc elle la couvre au complet comme le sol */
+#couche-filler {
+  background-image: url(./images/planet/filler-leger.png);
+  /* 10% plus grand que la scène : la couche dépasse de 5% de chaque côté
+     (54px en haut et en bas, 96px à gauche et à droite), donc son milieu reste
+     au milieu du sol et l'image n'est pas coupée.
+     Si on change ces chiffres, changer aussi le 54px du transform-origin plus bas */
+  inset: -54px -96px;
+}
+
 /* Bâtisses derrière le sol.
    C'est une couche à part pour pouvoir rester nette plus longtemps que le sol */
 #couche-batisse {
@@ -79,10 +90,16 @@ body {
   --decalage: 0px;
 }
 
-/* la bâtisse grossit à partir du même point que le sol pour rester collée dessus */
+/* la bâtisse et le filler grossissent à partir du même point que le sol pour rester collés dessus */
 #couche-sol,
+#couche-filler,
 #couche-batisse {
   transform-origin: center var(--horizon);
+}
+
+/* le filler commence 54px plus haut que la scène, alors son horizon est 54px plus bas dans la couche */
+#couche-filler {
+  transform-origin: center calc(var(--horizon) + 54px);
 }
 
 #couche-planete {
@@ -259,4 +276,13 @@ body {
   background: white;
   color: black;
   border-color: white;
+}
+/* Template d'animation 3 images (c'est scripts/animation.js qui change l'image).
+   Chaque animation donne sa place et sa taille avec son id, ex. :
+   #nuage { top: 100px; left: 200px; width: 300px; height: 200px; } */
+.animation {
+  position: absolute;
+  background-size: contain; /* l'image au complet, sans la déformer */
+  background-repeat: no-repeat;
+  background-position: center;
 }
