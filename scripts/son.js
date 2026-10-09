@@ -1,9 +1,7 @@
 console.log("son.js est bien chargé");
 
 
-/* =========================================
-   CRÉATION DES SONS
-   ========================================= */
+/* CRÉATION DES SONS */
 
 const musiqueFond = new Audio("./sons/musique_fond.mp3");
 const sonVille = new Audio("./sons/son_ville.mp3");
@@ -15,9 +13,7 @@ const sonNotification = new Audio("./sons/notification.mp3");
 const sonAppel = new Audio("./sons/appel.mp3");
 
 
-/* =========================================
-   RÉGLAGES DES SONS
-   ========================================= */
+/* RÉGLAGES DES SONS */
 
 // Les ambiances tournent en boucle
 musiqueFond.loop = true;
@@ -44,9 +40,7 @@ sonDezoom.volume = 0;
 let audioLance = false;
 
 
-/* =========================================
-   DÉMARRAGE DE L'AUDIO
-   ========================================= */
+/* DÉMARRAGE DE L'AUDIO */
 
 function lancerAudio() {
 
@@ -69,8 +63,8 @@ function lancerAudio() {
 }
 
 
-// Les navigateurs demandent généralement
-// une interaction avant d'autoriser le son
+
+// normalement il faut une interaction avant d'autoriser le son
 window.addEventListener("pointerdown", lancerAudio, { once: true });
 window.addEventListener("keydown", lancerAudio, { once: true });
 window.addEventListener("wheel", lancerAudio, { once: true });

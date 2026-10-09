@@ -5,6 +5,7 @@ const info = document.getElementById("zoom-info");
 const curseur = document.getElementById("echelle-curseur");
 const altitude = document.getElementById("echelle-altitude");
 const scene = document.getElementById("scene");
+const finExperience = document.getElementById("fin-experience");
 
 // Réglages
 const LARGEUR_IMAGE = 1920;
@@ -197,6 +198,14 @@ function mettreAJour() {
   altitude.textContent = calculerAltitude();
   curseur.style.bottom = (zoom / ZOOM_MAX) * 100 + "%"; // 0% en bas, 100% en haut
   mettreAJourCouches();
+  // Affiche l'écran de fin quand on atteint le zoom maximum
+
+  // À 10 000 km, le titre et le bouton apparaissent
+  if (zoom >= ZOOM_MAX) {
+    finExperience.classList.add("visible");
+  } else {
+    finExperience.classList.remove("visible");
+  }
 }
 
 // Agrandit la scène pour qu'elle remplisse l'écran
