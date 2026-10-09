@@ -81,7 +81,7 @@ function volumeDoux(audio, volumeCible) {
 
     // rapproche progressivement le volume actuel
     // du volume demandé
-    audio.volume += (volumeCible - audio.volume) * 0.05;
+    audio.volume += (volumeCible - audio.volume) * 0.10;
 
     // évite les très petites valeurs inutiles
     if (audio.volume < 0.001) {
@@ -131,15 +131,17 @@ function mettreAJourSons() {
 
         let volumeFeu = 0;
 
-        if (zoom >= 1.5 && zoom <= 3) {
+        if (zoom <= 1.2) {
 
-            volumeFeu = 0.30;
+            // proche du feu : il est bien audible
+            volumeFeu = 0.40;
 
-        } else if (zoom > 3 && zoom < 4) {
+        } else if (zoom < 3) {
 
-            const p = progression(3, 4);
+            // entre 1.2 et 3, le feu disparaît progressivement
+            const p = progression(1.2, 3);
 
-            volumeFeu = 0.30 * (1 - p);
+            volumeFeu = 0.40 * (1 - p);
         }
 
         volumeDoux(sonFeu, volumeFeu);
