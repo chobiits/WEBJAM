@@ -185,7 +185,8 @@ body {
 }
 
 /* Apparition au scroll */
-#synopsis p{
+#synopsis p,
+#conception p{
     margin-bottom: 30px;
 }
 
@@ -336,7 +337,6 @@ body {
 }
 
 .mini-galerie img:hover {
-    transform: scale(1.03);
     filter: contrast(1.05);
 }
 

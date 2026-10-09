@@ -1,7 +1,6 @@
 console.log("retour.js est bien charge");
 
 // Éléments du HTML
-const info = document.getElementById("zoom-info");
 const curseur = document.getElementById("echelle-curseur");
 const altitude = document.getElementById("echelle-altitude");
 const scene = document.getElementById("scene");
@@ -17,7 +16,6 @@ const HORIZON_VILLE = 540; // où le sommet de la planète arrive dans ville.png
 // Il est dans l'image du sol (ville2), qui couvre toute la scène
 const PAPILLON_X = 1267;
 const PAPILLON_Y = 254;
-const DOSSIER_IMAGES = "./images/";
 const ZOOM_MAX = 10;
 const PAS_ZOOM = 0.1; // ce qu'on enlève au zoom à chaque coup de molette
 // La descente arrête un peu avant le sol (zoom 0), sinon le papillon est trop gros à l'écran
@@ -97,23 +95,6 @@ function calculerOpacite(couche) {
 }
 
 
-// Met l'image de chaque couche si le fichier existe, sinon la couleur du css reste
-function chargerImages() {
-  for (const couche of couches) {
-    const element = document.getElementById(couche.id);
-    const chemin = DOSSIER_IMAGES + couche.id + ".png";
-    const image = new Image();
-
-    image.onload = function () {
-      element.style.backgroundImage = 'url("' + chemin + '")';
-      element.style.backgroundColor = "transparent"; // sinon la couleur se voit à travers le png
-      element.style.borderRadius = "0"; // c'est le png qui donne la forme de la planète
-    };
-
-    image.src = chemin;
-  }
-}
-
 // Chaque couche rétrécit quand on monte et laisse voir celle d'en arrière
 function mettreAJourCouches() {
   // Tout le monde glisse du même nombre de pixels pour que le papillon arrive au milieu de l'écran.
@@ -171,7 +152,6 @@ function mettreAJourHorizon() {
 // À appeler chaque fois que le zoom change
 function mettreAJour() {
   mettreAJourHorizon();
-  info.textContent = "Zoom : " + zoom;
   altitude.textContent = calculerAltitude();
   curseur.style.bottom = (calculerZoomEchelle() / ZOOM_MAX) * 100 + "%"; // 0% en bas, 100% en haut
   mettreAJourCouches();
@@ -229,5 +209,4 @@ window.addEventListener("resize", ajusterScene);
 
 // Au chargement de la page
 ajusterScene();
-chargerImages();
 mettreAJour();

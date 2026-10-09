@@ -48,7 +48,7 @@ body {
   display: none;
 }
 
-/* Couleurs de test, remplacées par images/<id>.png quand le fichier existe */
+/* Couleurs et images de chaque couche */
 #couche-etoiles {
   background-color: var(--onyx);
 } /* les étoiles viennent de la classe .etoiles (commun.css) */
@@ -205,11 +205,6 @@ body {
   white-space: nowrap;
 
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
-}
-
-/* debug caché */
-#zoom-info {
-  display: none;
 }
 
 

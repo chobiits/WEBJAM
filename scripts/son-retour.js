@@ -4,8 +4,6 @@ console.log("son-retour.js est bien chargé");
 /* CRÉATION DES SONS */
 
 const musiqueFondRetour = new Audio("./sons/musique_fond.mp3");
-const sonVilleRetour = new Audio("./sons/son_ville.mp3");
-const sonFeuRetour = new Audio("./sons/feu.mp3");
 const sonEspaceRetour = new Audio("./sons/son_espace.mp3");
 const sonMouvementRetour = new Audio("./sons/son_vent_dezoom.mp3");
 const sonUtopique = new Audio("./sons/son_utopique.mp3");
@@ -14,8 +12,6 @@ const sonUtopique = new Audio("./sons/son_utopique.mp3");
 /* RÉGLAGES */
 
 musiqueFondRetour.loop = true;
-sonVilleRetour.loop = true;
-sonFeuRetour.loop = true;
 sonEspaceRetour.loop = true;
 sonMouvementRetour.loop = true;
 
@@ -24,8 +20,6 @@ sonUtopique.loop = false;
 
 
 musiqueFondRetour.volume = 0;
-sonVilleRetour.volume = 0;
-sonFeuRetour.volume = 0;
 sonEspaceRetour.volume = 0;
 sonMouvementRetour.volume = 0;
 sonUtopique.volume = 0;
@@ -45,8 +39,6 @@ function lancerAudioRetour() {
     audioRetourLance = true;
 
     musiqueFondRetour.play().catch(() => {});
-    sonVilleRetour.play().catch(() => {});
-    sonFeuRetour.play().catch(() => {});
     sonEspaceRetour.play().catch(() => {});
     sonMouvementRetour.play().catch(() => {});
     sonUtopique.play().catch(() => {});

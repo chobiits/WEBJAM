@@ -1,7 +1,6 @@
 console.log("main.js est bien charge");
 
 // Éléments du HTML
-const info = document.getElementById("zoom-info");
 const curseur = document.getElementById("echelle-curseur");
 const altitude = document.getElementById("echelle-altitude");
 const scene = document.getElementById("scene");
@@ -19,7 +18,6 @@ const HORIZON_VILLE = 540; // où le sommet de la planète arrive dans ville.png
 // Elle est dans l'image de la bâtisse : si on déplace la bâtisse dans jeu.css, il faut changer ces chiffres
 const FLEUR_X = 805;
 const FLEUR_Y = 389;
-const DOSSIER_IMAGES = "./images/";
 const ZOOM_MAX = 10;
 const PAS_ZOOM = 0.1; // ce qu'on ajoute au zoom à chaque coup de molette
 const PENTE_ALTITUDE = 0.7; // plus c'est gros, plus l'altitude monte vite
@@ -85,23 +83,6 @@ function calculerOpacite(couche) {
   return opacite;
 }
 
-
-// Met l'image de chaque couche si le fichier existe, sinon la couleur du css reste
-function chargerImages() {
-  for (const couche of couches) {
-    const element = document.getElementById(couche.id);
-    const chemin = DOSSIER_IMAGES + couche.id + ".png";
-    const image = new Image();
-
-    image.onload = function () {
-      element.style.backgroundImage = 'url("' + chemin + '")';
-      element.style.backgroundColor = "transparent"; // sinon la couleur se voit à travers le png
-      element.style.borderRadius = "0"; // c'est le png qui donne la forme de la planète
-    };
-
-    image.src = chemin;
-  }
-}
 
 // Chaque couche rétrécit quand on monte et laisse voir celle d'en arrière
 function mettreAJourCouches() {
@@ -174,7 +155,6 @@ function mettreAJour() {
   // le texte apparaît entre le zoom 3 et le zoom 5, puis s'efface entre le zoom 7 et le zoom 9,
   // avant le message de la fin (on prend le plus petit des deux fondus)
   texteFond.style.opacity = Math.min(1, Math.max(0, Math.min((zoom - 3) / 2, (9 - zoom) / 2)));
-  info.textContent = "Zoom : " + zoom;
   altitude.textContent = calculerAltitude();
   curseur.style.bottom = (zoom / ZOOM_MAX) * 100 + "%"; // 0% en bas, 100% en haut
   mettreAJourCouches();
@@ -227,5 +207,4 @@ window.addEventListener("resize", ajusterScene);
 
 // Au chargement de la page
 ajusterScene();
-chargerImages();
 mettreAJour();
