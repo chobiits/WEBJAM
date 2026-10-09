@@ -145,7 +145,7 @@ Ils sont placés par desus le fond étoilé principal*/
 
   pointer-events: none;
 
-  opacity: 0.18;
+  opacity: 0.25;
 }
 
 @keyframes scintille {
