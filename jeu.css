@@ -132,11 +132,10 @@ body {
   position: fixed;
   top: 16px;
   bottom: 16px;
-  left: 16px;
-  width: 72px;
+  left: 30px;
+  width: 10px;
   z-index: 30;
-
-  background: rgba(20, 20, 20, 0.55);
+  background: rgba(0, 0, 0, 0.72);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 18px;
   backdrop-filter: blur(8px);
@@ -148,15 +147,8 @@ body {
   position: absolute;
   top: 16px;
   bottom: 16px;
-  left: 24px;
+  left: 0px;
   width: 2px;
-
-  background: linear-gradient(
-    to top,
-    rgba(255, 255, 255, 0.15),
-    rgba(255, 255, 255, 0.95)
-  );
-  border-radius: 999px;
 }
 
 /* le point qui monte */
@@ -190,9 +182,9 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 999px;
 
-  color: #f7c600;
+  color: #fff;
   font-family: "Bebas Neue", Arial, sans-serif;
-  font-size: 12px;
+  font-size: 18px;
   font-weight: 700;
   line-height: 1;
   white-space: nowrap;
