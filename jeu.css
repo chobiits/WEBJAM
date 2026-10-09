@@ -1,7 +1,7 @@
 body {
   margin: 0;
-  overflow: hidden;       /* pas de scroll, la molette sert au zoom */
-  background: black;      /* le fondu entre les pages se fait sur du noir */
+  overflow: hidden; /* pas de scroll, la molette sert au zoom */
+  background: black; /* le fondu entre les pages se fait sur du noir */
 }
 
 /* La scène fait la taille des images (1920 x 1080) et reste centrée.
@@ -21,7 +21,9 @@ body {
   inset: 0;
   background-size: 100% 100%;
   background-repeat: no-repeat;
-  transition: transform 0.2s, opacity 0.2s;
+  transition:
+    transform 0.2s,
+    opacity 0.2s;
 }
 
 .couche-cachee {
@@ -29,13 +31,29 @@ body {
 }
 
 /* Couleurs de test, remplacées par images/<id>.png quand le fichier existe */
-#couche-etoiles  { background-color: black; } /* les étoiles viennent de la classe .etoiles (commun.css) */
-#couche-planete  { background-color: navy; width: 300px; height: 300px; border-radius: 50%; }
-#couche-sol      { background-color: khaki; filter: url(#courbure); }
+#couche-etoiles {
+  background-color: black;
+} /* les étoiles viennent de la classe .etoiles (commun.css) */
+#couche-planete {
+  background-color: navy;
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+}
+#couche-ciel {
+  background-color: rgb(255, 255, 255);
+  width: 400px; /* plus grand que la planète, sinon il est caché derrière */
+  height: 400px;
+  border-radius: 50%;
+  filter: blur(10px); /* le ciel est un halo flou autour de la planète */  
+}
+#couche-sol {
+  background-color: khaki;
+}
 
 /* Tout est accroché au même point : l'horizon du sol = le haut de la planète */
 :root {
-  --horizon: 50%;         /* hauteur du sol à partir du haut, modifiée par le js */
+  --horizon: 50%; /* hauteur du sol à partir du haut, modifiée par le js */
 }
 
 #couche-sol {
@@ -45,6 +63,18 @@ body {
 #couche-planete {
   inset: var(--horizon) auto auto calc(50% - 150px); /* le haut de la planète touche le sol */
   transform-origin: top center;
+}
+/* Le ciel (400px) est un halo autour de la planète (300px) :
+   il dépasse de 50px de chaque côté, soit (400 - 300) / 2 */
+#couche-ciel {
+  /* inset = haut, droite, bas, gauche
+     haut   : 50px plus haut que l'horizon, pour dépasser au-dessus de la planète
+     gauche : centré, on recule de la moitié de la largeur (400 / 2 = 200px)
+     calc() fait le calcul, var() lit seulement la variable */
+  inset: calc(var(--horizon) - 50px) auto auto calc(50% - 200px);
+  /* grossit à partir du sommet de la planète (centré, à 50px du haut du ciel),
+     le même point que la planète, sinon les deux se décalent pendant le zoom */
+  transform-origin: center 50px;
 }
 
 /* Échelle d'altitude */
@@ -74,7 +104,7 @@ body {
 
 #echelle-curseur {
   position: absolute;
-  left: -5px;             /* centré sur la barre : (12px - 2px) / 2 */
+  left: -5px; /* centré sur la barre : (12px - 2px) / 2 */
   width: 12px;
   height: 12px;
   border-radius: 50%;
@@ -93,6 +123,5 @@ body {
 }
 
 #zoom-info {
-  display: none;          /* sert juste à déboguer */
+  display: none; /* sert juste à déboguer */
 }
-

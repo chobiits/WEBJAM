@@ -28,19 +28,10 @@
     </div>
   </div>
 
-  <!-- filtre qui courbe le sol, le js crée la carte et règle la force -->
-  <svg width="0" height="0" style="position: absolute">
-    <!-- height 1.5 pour que le sol courbé ne soit pas coupé en bas -->
-    <filter id="courbure" x="0" y="0" width="1" height="1.5" color-interpolation-filters="sRGB">
-      <feImage id="courbure-carte" preserveAspectRatio="none" result="carte" />
-      <feDisplacementMap id="courbure-force" in="SourceGraphic" in2="carte" scale="0" xChannelSelector="R"
-        yChannelSelector="G" />
-    </filter>
-  </svg>
-
   <!-- les couches, de la plus loin à la plus proche -->
   <div id="scene">
     <div id="couche-etoiles" class="couche etoiles"></div>
+    <div id="couche-ciel" class="couche"></div>
     <div id="couche-planete" class="couche"></div>
     <div id="couche-sol" class="couche"></div>
   </div>
