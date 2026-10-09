@@ -41,10 +41,17 @@
     <div id="couche-sol" class="couche"></div>
     <!-- batiment pour blender, en avant du sol -->
     <div id="couche-filler" class="couche"></div>
+    <!-- nuages et satellites animés (scripts/animation.js), collés sur la planète,
+         en avant de la ville pour cacher sa disparition -->
+    <div id="couche-orbite" class="couche">
+      <div id="nuages-1" class="animation" data-dossier="./images/animation-nuage/"></div>
+      <div id="nuages-2" class="animation" data-dossier="./images/animation-nuage/"></div>
+      <div id="satellite-1" class="animation" data-dossier="./images/animation-satelite/"></div>
+      <div id="satellite-2" class="animation" data-dossier="./images/animation-satelite/"></div>
+      <!-- l'avion ne bouge pas, c'est juste une image -->
+      <div id="avion"></div>
+    </div>
   </div>
-    <!-- exemple d'animation 3 images (le template est dans scripts/animation.js),
-         à placer avec son id dans jeu.css :
-    <div id="nuage" class="animation" data-dossier="./images/animation-nuage/"></div> -->
     <div id="notifications"></div>
     <!-- Écran de fin : apparaît quand on arrive à 10 000 km -->
     <!-- Message de transition à la fin du dézoom -->

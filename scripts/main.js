@@ -21,11 +21,6 @@ const FLEUR_Y = 389;
 const DOSSIER_IMAGES = "./images/"; // une image par couche, nommée comme son id (ex. couche-sol.png)
 const ZOOM_MAX = 10;
 const PAS_ZOOM = 0.1; // ce qu'on ajoute au zoom à chaque coup de molette
-// Entre ces deux zooms (6 m et 107 m sur l'échelle) on monte plus vite,
-// c'est là que les couches de la ville sont le moins bien alignées
-const ZOOM_RAPIDE_DEBUT = 1.1;
-const ZOOM_RAPIDE_FIN = 2.9;
-const PAS_ZOOM_RAPIDE = 0.5; // le pas à la fin de la zone rapide, il part de PAS_ZOOM et accélère jusqu'ici
 const PENTE_ALTITUDE = 0.7; // plus c'est gros, plus l'altitude monte vite
 
 let zoom = 0; // 0 = au sol, 10 = on voit la planète au complet
@@ -34,42 +29,37 @@ let zoom = 0; // 0 = au sol, 10 = on voit la planète au complet
 // niveau = zoom où la couche est à sa taille normale
 // depart = sa taille au zoom 0
 // debut  = zoom où la couche commence à être affichée
+// entree = sur combien de zoom elle apparaît en fondu à partir de debut (0 = elle est là d'un coup)
 // fin    = zoom où la couche a disparu
 // fondu  = sur combien de zoom elle s'efface avant fin
 // fixe   = true si elle ne change pas de taille
-// flouDepart = son flou (en px à l'écran) jusqu'au zoom flouDebut
-// flouDebut  = zoom où le flou commence à changer
-// flouComplet = zoom où le flou a fini de changer
-// flouFin    = son flou à partir du zoom flouComplet
-// flouSortie = le flou ajouté pendant que la couche s'efface (0 = rien de plus)
 const couches = [
   // La ville a trois profondeurs : la bâtisse (loin), le sol (milieu), le filler (proche).
   // Plus une couche est proche, plus elle est grosse au début (depart) et plus elle rapetisse vite,
   // c'est ça qui fait la parallaxe. Les trois arrivent presque à la même taille (x0.2) au zoom 6.
   // Elles rapetissent juste un peu plus vite que la planète :
   // par zoom, planète x0.63, bâtisse x0.58, sol x0.57, filler x0.54
-  // le sol devient flou juste avant les premières notifications (zoom 3, dans notifications.js)
-  { id: "couche-sol", niveau: 3.3, depart: 6.5, debut: 0, fin: 7, fondu: 1.5, fixe: false, flouDepart: 0, flouDebut: 2.5, flouComplet: 3, flouFin: 2, flouSortie: 0 },
+  { id: "couche-sol", niveau: 3.3, depart: 6.5, debut: 0, entree: 0, fin: 7, fondu: 1.5, fixe: false },
   // depart 100 = entre 20 (le sol rapetisse beaucoup plus vite que la planète)
   // et 1024 (la planète rapetisse aussi vite que le sol)
-  // un peu floue au début parce qu'elle est très grossie, nette à la fin
-  { id: "couche-planete", niveau: 10, depart: 100, debut: 0, fin: 11, fondu: 1, fixe: false, flouDepart: 6, flouDebut: 0, flouComplet: 10, flouFin: 0, flouSortie: 0 },
+  { id: "couche-planete", niveau: 10, depart: 100, debut: 0, entree: 0, fin: 11, fondu: 1, fixe: false },
   // le ciel disparaît avant la planète sinon on voit du ciel derrière la planète
   // il s'efface du zoom 4 au zoom 8
   // même niveau et même depart que la planète, sinon les deux se décalent
-  // pas de flou ici, le ciel a déjà le sien dans jeu.css
-  { id: "couche-ciel", niveau: 10, depart: 100, debut: 0, fin: 8, fondu: 4, fixe: false, flouDepart: 0, flouDebut: 0, flouComplet: 10, flouFin: 0, flouSortie: 0 },
+  { id: "couche-ciel", niveau: 10, depart: 100, debut: 0, entree: 0, fin: 8, fondu: 4, fixe: false },
   // les étoiles sont trop loin pour changer de taille
   // debut 3.5 : avant, le ciel les cache au complet, pas besoin de les animer pour rien
-  { id: "couche-etoiles", niveau: 10, depart: 1, debut: 3.5, fin: 11, fondu: 1, fixe: true, flouDepart: 0, flouDebut: 0, flouComplet: 10, flouFin: 0, flouSortie: 0 },
+  { id: "couche-etoiles", niveau: 10, depart: 1, debut: 3.5, entree: 0, fin: 11, fondu: 1, fixe: true },
   // la plus loin de la ville, donc la plus petite au début et la plus lente
   // depart 5 : la fleur fait 39px de large, x5 = environ 1/10 de la largeur de l'écran (192px)
-  // elle devient à peine floue en même temps que le sol (flouFin 1),
-  // puis très floue juste avant de disparaître (flouSortie 8 : de 1px au zoom 6 à 9px au zoom 7),
-  // et elle finit de disparaître en même temps que lui (zoom 7)
-  { id: "couche-batisse", niveau: 3, depart: 5, debut: 0, fin: 7, fondu: 1, fixe: false, flouDepart: 0, flouDebut: 2.5, flouComplet: 3, flouFin: 1, flouSortie: 8 },
+  // elle finit de disparaître en même temps que le sol (zoom 7)
+  { id: "couche-batisse", niveau: 3, depart: 5, debut: 0, entree: 0, fin: 7, fondu: 1, fixe: false },
   // les bâtiments en avant du sol : les plus proches, donc les plus gros au début et les plus rapides
-  { id: "couche-filler", niveau: 3.6, depart: 9, debut: 0, fin: 7, fondu: 1.5, fixe: false, flouDepart: 0, flouDebut: 2.5, flouComplet: 3, flouFin: 2, flouSortie: 0 },
+  { id: "couche-filler", niveau: 3.6, depart: 9, debut: 0, entree: 0, fin: 7, fondu: 1.5, fixe: false },
+  // les nuages et les satellites (animés par animation.js), en avant de la ville pour cacher sa disparition
+  // même niveau et même depart que la planète pour rester collés dessus
+  // ils apparaissent en fondu du zoom 4.8 au zoom 5.5, juste avant que la ville commence à s'effacer
+  { id: "couche-orbite", niveau: 10, depart: 100, debut: 4.8, entree: 0.7, fin: 11, fondu: 1, fixe: false },
 ];
 
 // 1 m au zoom 0, 10 000 km au zoom 10
@@ -91,8 +81,18 @@ function calculerTaille(couche) {
 
 // 1 = visible, 0 = invisible
 // ex. le ciel (fin 8, fondu 4) au zoom 6 : (8 - 6) / 4 = 0.5
+// Si la couche a une entree, elle apparaît aussi en fondu au début
+// ex. les nuages (debut 4.8, entree 0.7) au zoom 5 : (5 - 4.8) / 0.7 = 0.29
 function calculerOpacite(couche) {
   let opacite = (couche.fin - zoom) / couche.fondu;
+
+  // pendant l'entrée, on prend le fondu d'entrée s'il est plus petit
+  if (couche.entree > 0) {
+    const opaciteEntree = (zoom - couche.debut) / couche.entree;
+    if (opaciteEntree < opacite) {
+      opacite = opaciteEntree;
+    }
+  }
 
   // il faut rester entre 0 et 1
   if (opacite > 1) {
@@ -104,28 +104,6 @@ function calculerOpacite(couche) {
   return opacite;
 }
 
-// Le flou passe de flouDepart (au zoom flouDebut) à flouFin (au zoom flouComplet)
-// ex. la bâtisse (flouDebut 2.5, flouComplet 3, flouFin 1) au zoom 2.8 :
-// (2.8 - 2.5) / (3 - 2.5) = 0.6, donc 1 * 0.6 = 0.6px
-// Ensuite, pendant que la couche s'efface, on ajoute flouSortie petit à petit
-// ex. la bâtisse (flouSortie 8) à moitié effacée : 1 + 8 * 0.5 = 5px
-function calculerFlou(couche) {
-  // de 0 (au zoom flouDebut) à 1 (au zoom flouComplet)
-  let progression = (zoom - couche.flouDebut) / (couche.flouComplet - couche.flouDebut);
-  if (progression < 0) {
-    progression = 0;
-  }
-  if (progression > 1) {
-    progression = 1;
-  }
-
-  const flou = couche.flouDepart + (couche.flouFin - couche.flouDepart) * progression;
-
-  // de 0 (pas encore en train de s'effacer) à 1 (complètement effacée)
-  const sortie = 1 - calculerOpacite(couche);
-
-  return flou + couche.flouSortie * sortie;
-}
 
 // Met l'image de chaque couche si le fichier existe, sinon la couleur du css reste
 function chargerImages() {
@@ -171,13 +149,6 @@ function mettreAJourCouches() {
       element.style.transform = "translate(" + glisseX + "px, " + glisseY + "px) scale(" + taille + ")";
     }
     element.style.opacity = opacite;
-
-    // le css applique le flou avant de grossir la couche, donc il serait grossi lui aussi
-    // on le divise par la taille pour qu'il garde la même épaisseur à l'écran
-    if (couche.flouDepart !== 0 || couche.flouFin !== 0) {
-      const flou = calculerFlou(couche) / taille;
-      element.style.filter = "blur(" + flou + "px)";
-    }
 
     // couche-cachee est dans jeu.css
     // une couche cachée ne coûte rien au navigateur, ça aide contre le lag
@@ -265,25 +236,6 @@ function ajusterScene() {
   scene.style.transform = "scale(" + echelle + ")";
 }
 
-// De combien le zoom monte au prochain coup de molette
-// Dans la zone rapide, le pas grossit à mesure qu'on avance : ça part doucement et ça accélère
-// ex. au milieu de la zone (zoom 2) : 0.1 + (0.5 - 0.1) * 0.5 = 0.3
-function calculerPas() {
-  if (zoom < ZOOM_RAPIDE_DEBUT || zoom >= ZOOM_RAPIDE_FIN) {
-    return PAS_ZOOM;
-  }
-
-  // de 0 (au début de la zone) à 1 (à la fin)
-  const progression = (zoom - ZOOM_RAPIDE_DEBUT) / (ZOOM_RAPIDE_FIN - ZOOM_RAPIDE_DEBUT);
-  const pas = PAS_ZOOM + (PAS_ZOOM_RAPIDE - PAS_ZOOM) * progression;
-
-  // on ne dépasse pas la fin de la zone, sinon on sauterait par-dessus la première notification, au zoom 3
-  if (zoom + pas > ZOOM_RAPIDE_FIN) {
-    return ZOOM_RAPIDE_FIN - zoom;
-  }
-  return pas;
-}
-
 // Dézoom à la molette, on peut juste monter, pas redescendre
 function quandMoletteTourne(evenement) {
   // il faut fermer les notifications avant de continuer à monter
@@ -294,7 +246,7 @@ function quandMoletteTourne(evenement) {
 
   // deltaY positif = molette vers le bas
   if (evenement.deltaY > 0) {
-    zoom = zoom + calculerPas();
+    zoom = zoom + PAS_ZOOM;
   }
 
   if (zoom > ZOOM_MAX) {
