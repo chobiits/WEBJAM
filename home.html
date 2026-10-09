@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -45,9 +46,24 @@
                 <h2 class="reveal">Synopsis</h2>
 
                 <p class="reveal reveal-delay">
-                    Dans un monde avec un équilibre fragile, faites le tri entre ce qui mérite votre
-                    attention et ce qui vous éloigne de l'équilibre.
+                    Vous êtes au centre de tout, de la terre, de votre monde, de notre univers. Vous êtes tout ce qu'il
+                    en reste, une simple fleur au milieu d'un chaos inimaginable. Nature Brut rassemble nature et
+                    brutalisme dans un paralaxe au sein d'un site web interactif et immersif. Il met en opposition
+                    l'importance des problèmes écologiques et l'impact de l'être humain sur la Terre. L'urbanisme
+                    devient un moyen de représenter la surconsommation, la surpopulation, la mort de la beauté naturelle
+                    des choses. Empêchez les catastrophes en retirant les notifications et recentrex vous. Retrouvez
+                    votre équilibre et celui de la Terre.
                 </p>
+
+                <p>
+                    D'où son nom Nature Brut, les deux termes se placent en oxymore l'un face à l'autre.
+                </p>
+
+                <p>
+                    Prenez cet instant pour prendre votre dernière respiration, ce n'est rien de le dire mais lorsqu'il n'y aura plus personne pour blâmer mis à part vos anciens.. Il n'y aura plus le temps pour en rire.
+                </p>
+
+
             </section>
 
 
@@ -62,78 +78,75 @@
                 </ul>
             </section>
 
-                <footer class="site-footer">
-                    <p>Projet réalisé dans le cadre du Webjam 2026.</p>
+            <footer class="site-footer">
+                <p>Projet réalisé dans le cadre du Webjam 2026.</p>
 
-                    <img
-                        src="images/ia.png"
-                        alt="Mention d'utilisation de l'intelligence artificielle"
-                        class="ia-logo"
-                    >
-                </footer>
+                <img src="images/ia.png" alt="Mention d'utilisation de l'intelligence artificielle" class="ia-logo">
+            </footer>
 
         </div>
 
     </main>
 
-    
 
-<!-- pour les éléments à faire apparaître au scroll -->
-<script>
-    // Récupère tous les éléments HTML qui possèdent la classe "reveal"
-    const elements = document.querySelectorAll(".reveal");
-    // Crée un observateur qui va vérifier si les éléments entrent dans la zone visible de l'écran
-    const observer = new IntersectionObserver((entries) => {
-        // "entries" contient tous les éléments observés dont l'état de visibilité vient de changer
-        entries.forEach((entry) => {
 
-            if (entry.isIntersecting) {
-                entry.target.classList.add("visible");
-            }
+    <!-- pour les éléments à faire apparaître au scroll -->
+    <script>
+        // Récupère tous les éléments HTML qui possèdent la classe "reveal"
+        const elements = document.querySelectorAll(".reveal");
+        // Crée un observateur qui va vérifier si les éléments entrent dans la zone visible de l'écran
+        const observer = new IntersectionObserver((entries) => {
+            // "entries" contient tous les éléments observés dont l'état de visibilité vient de changer
+            entries.forEach((entry) => {
 
+                if (entry.isIntersecting) {
+                    entry.target.classList.add("visible");
+                }
+
+            });
+        }, {
+            // L'animation se déclenche quand 20 % de l'élément est visible dans l'écran
+            threshold: 0.2
         });
-    }, {
-        // L'animation se déclenche quand 20 % de l'élément est visible dans l'écran
-        threshold: 0.2
-    });
 
-    elements.forEach((element) => {
-        observer.observe(element);
-    });
-</script>
+        elements.forEach((element) => {
+            observer.observe(element);
+        });
+    </script>
 
 
-<!-- pour le cercle autour du curseur -->
-<div class="cursor-circle"></div>
+    <!-- pour le cercle autour du curseur -->
+    <div class="cursor-circle"></div>
 
-<script>
-    // Récupère le cercle créé juste au-dessus
-    const cursorCircle = document.querySelector(".cursor-circle");
+    <script>
+        // Récupère le cercle créé juste au-dessus
+        const cursorCircle = document.querySelector(".cursor-circle");
 
-    // Position de la souris    
-    let mouseX = 0;
-    let mouseY = 0;
+        // Position de la souris    
+        let mouseX = 0;
+        let mouseY = 0;
 
-    let circleX = 0;
-    let circleY = 0;
-    // "écoute" les déplacements de la souris
-    document.addEventListener("mousemove", (event) => {
-        mouseX = event.clientX;
-        mouseY = event.clientY;
-    });
+        let circleX = 0;
+        let circleY = 0;
+        // "écoute" les déplacements de la souris
+        document.addEventListener("mousemove", (event) => {
+            mouseX = event.clientX;
+            mouseY = event.clientY;
+        });
 
-    function animateCursor() {
-        // mouvement fluide avec un léger retard
-        circleX += (mouseX - circleX) * 0.12;
-        circleY += (mouseY - circleY) * 0.12;
+        function animateCursor() {
+            // mouvement fluide avec un léger retard
+            circleX += (mouseX - circleX) * 0.12;
+            circleY += (mouseY - circleY) * 0.12;
 
-        cursorCircle.style.left = circleX + "px";
-        cursorCircle.style.top = circleY + "px";
-        
-        requestAnimationFrame(animateCursor);
-    }
-    // Demande de relancer cette fonction à la prochaine image affichée
-    animateCursor();
-</script>
+            cursorCircle.style.left = circleX + "px";
+            cursorCircle.style.top = circleY + "px";
+
+            requestAnimationFrame(animateCursor);
+        }
+        // Demande de relancer cette fonction à la prochaine image affichée
+        animateCursor();
+    </script>
 </body>
+
 </html>
